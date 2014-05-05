@@ -10,7 +10,11 @@ public class Board {
 	char onMove; // B or W
 
 	public static void main(String args[]) {
-		System.out.println(new Board());
+		Board board = new Board();
+		System.out.println(board);
+		System.out.println();
+		board.move(new Move("b2-b3"));
+		System.out.println(board);
 	}
 
 	public Board(String state) {
@@ -20,20 +24,20 @@ public class Board {
 
 	public Board(Reader reader) throws IOException {
 		
-		char[] cbuf = new char[40];
+		char[] cbuf = new char[39];
 		reader.read(cbuf);
 		makeBoard(cbuf.toString());
 	}
 
 	public Board() {
 		
-		makeBoard("1 W\nkqbnr\nppppp\n.....\n.....\nPPPPP\nRNBQK\n");
+		makeBoard("1 W\nkqbnr\nppppp\n.....\n.....\nPPPPP\nRNBQK");
 	}
 
 	private void makeBoard(String state) {
 
-		if (state.length() != 40) {
-			throw new Error("state does not have 40 characters but "
+		if (state.length() != 39) {
+			throw new Error("state does not have 39 characters but "
 					+ state.length());
 		}
 
