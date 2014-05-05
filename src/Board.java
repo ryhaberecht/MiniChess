@@ -141,6 +141,20 @@ public class Board {
 
 		return result;
 	}
+	
+	public String toHumanReadableString() {
+
+		String result = "Move Nr.: " + moveNum + "\nFor Player: " + (onMove == 'W' ? "White" : "Black") + "\n";
+
+		for (int row = 5; row >= 0; row--) {
+			result += "\n" + (row+1) + "|";
+			for (int col = 0; col < 5; col++) {
+				result += squares[row][col];
+			}
+		}
+
+		return result += "\n  -----\n  abcde";
+	}
 
 	public void print(Writer writer) throws IOException {
 		writer.write(this.toString());
