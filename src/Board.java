@@ -3,9 +3,9 @@ public class Board
 {
 	char[][] squares = new char[6][5];	// number / letter -> row / column
 	
-	int moveNumber;	// 1 to 40 (40 = draw)
+	int moveNum;	// 1 to 40 (40 = draw)
 	
-	char whoseMove;	// B or W
+	char onMove;	// B or W
 	
 	
 	public Board(String state) throws Exception
@@ -16,17 +16,23 @@ public class Board
 		
 	}
 	
+	void makeBoard(String state)
+	{
+		String [] lines = state.split("\n");
+		
+	}
+	
 	public String toString()
 	{
-		String state = "";
-		
-		for (int i = 0; i < 6; i++) {
-			for (int j = 0; j < 5; j++) {
-				state += squares[i][j];
+		String result = moveNum + " " + onMove + "\n";
+		for (int row = 5; row >= 0; --row) {
+			for (int col = 0; col < 5; col++) {
+				result += squares[row][col];
 			}
-			state += "\n";
+			
+			result += "\n";
 		}
 		
-		return state += moveNumber + " " + whoseMove;
+		return result;
 	}
 }
