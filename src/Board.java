@@ -44,6 +44,9 @@ public class Board {
 		}
 
 		this.moveNum = Integer.parseInt(lines[0].substring(0, 1));
+		if (this.moveNum < 1 || this.moveNum > 40) {
+			throw new Error("moveNum impossible, < 0 or > 40! moveNum = " + this.moveNum);
+		}
 
 		this.onMove = lines[0].charAt(2);
 		if (this.onMove != 'B' && this.onMove != 'W') {
