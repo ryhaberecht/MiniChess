@@ -61,8 +61,8 @@ public class Board {
 
 	private void makeBoard(String state) {
 
-		if (state.length() != 39) {
-			throw new Error("state does not have 39 characters but "
+		if (state.length() != 39 && state.length() != 40) {
+			throw new Error("state does not have 39 or 40 characters but "
 					+ state.length() + ". And is: " + state);
 		}
 
@@ -72,13 +72,17 @@ public class Board {
 			throw new Error("state does not have 7 lines");
 		}
 
-		this.moveNum = Integer.parseInt(lines[0].substring(0, 1));
+		this.moveNum = Integer.parseInt(lines[0].substring(0, 2));
 		if (this.moveNum < 1 || this.moveNum > 40) {
 			throw new Error("moveNum impossible, < 0 or > 40! moveNum = "
 					+ this.moveNum);
 		}
 
-		this.onMove = lines[0].charAt(2);
+		if (this.moveNum < 10) {
+			this.onMove = lines[0].charAt(2);
+		} else {
+			this.onMove = lines[0].charAt(3);
+		}
 		if (this.onMove != 'B' && this.onMove != 'W') {
 			throw new Error("onMove is not B or W");
 		}
@@ -142,13 +146,14 @@ public class Board {
 
 		return result;
 	}
-	
+
 	public String toHumanReadableString() {
 
-		String result = "Move Nr.: " + moveNum + "\nFor Player: " + (onMove == 'W' ? "White" : "Black") + "\n";
+		String result = "Move Nr.: " + moveNum + "\nFor Player: "
+				+ (onMove == 'W' ? "White" : "Black") + "\n";
 
 		for (int row = 5; row >= 0; row--) {
-			result += "\n" + (row+1) + "|";
+			result += "\n" + (row + 1) + "|";
 			for (int col = 0; col < 5; col++) {
 				result += squares[row][col];
 			}
@@ -217,6 +222,7 @@ public class Board {
 		this.moveNum += 1; // increase number of turns (moves)
 		if (this.moveNum == 40) { // tie!
 			// TODO
+			
 		}
 	}
 }

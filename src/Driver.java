@@ -5,7 +5,7 @@ public class Driver {
 
 	public static void main(String[] args)
 	{
-		Board board = new Board();
+		Board board = new Board("11 W\nkqbnr\npp.pp\n..p.P\n.....\nPPPPN\nR.BQK");
 		System.out.println(board.toHumanReadableString());
 		System.out.println();
 		System.out.println("Next move:");
