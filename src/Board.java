@@ -8,22 +8,25 @@ public class Board
 	char whoseMove;	// B or W
 	
 	
-	public Board(String boardString)
+	public Board(String state) throws Exception
 	{
+		if (state.length() < 40) {
+			throw new Exception("state is shorter than 40");
+		}
 		
 	}
 	
 	public String toString()
 	{
-		String boardString = "";
+		String state = "";
 		
 		for (int i = 0; i < 6; i++) {
 			for (int j = 0; j < 5; j++) {
-				boardString += squares[i][j];
+				state += squares[i][j];
 			}
-			boardString += "\n";
+			state += "\n";
 		}
 		
-		return boardString += moveNumber + " " + whoseMove;
+		return state += moveNumber + " " + whoseMove;
 	}
 }
