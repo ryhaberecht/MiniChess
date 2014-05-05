@@ -115,4 +115,43 @@ public class Board {
 	{
 		writer.write(this.toString());
 	}
+	
+	public void move(Move move)
+	{		
+		char piece = squares[move.from.row][move.from.col];	// piece to be moved
+		if (piece == '.') {
+			throw new Error("No piece at " + move.from.toString() + " (row = " + move.from.row + ", column = " + move.from.col + ")");
+		}
+		boolean pieceIsWhite = (piece >= 'A' && piece <= 'Z') ? true : false;
+		
+		if (pieceIsWhite && this.onMove == 'B') {
+			throw new Error("white piece to be moved although it is black's turn! Move = " + move.toString());
+		}
+		if (!pieceIsWhite && this.onMove == 'W') {
+			throw new Error("black piece to be moved although it is white's turn! Move = " + move.toString());
+		}
+		
+		if (squares[move.to.row][move.to.col] != '.') {	// new position already taken by piece
+			
+			char pieceToBeTaken = squares[move.to.row][move.to.col];	// piece to be taken
+			boolean pieceToBeTakenIsWhite = (pieceToBeTaken >= 'A' && pieceToBeTaken <= 'Z') ? true : false;
+			
+			if (pieceIsWhite && pieceToBeTakenIsWhite) {
+				throw new Error("white piece to be taken by white piece! Move = " + move.toString());
+			}
+			if (!pieceIsWhite && !pieceToBeTakenIsWhite) {
+				throw new Error("black piece to be taken by black piece! Move = " + move.toString());
+			}
+			
+			//TODO figur schlagen
+		}
+		
+		squares[move.to.row][move.to.col] = piece;	// move piece?
+		squares[move.from.row][move.from.col] = '.';	// remove old piece position
+		
+		this.moveNum += 1;	// increase number of turns (moves)
+		if (this.moveNum == 40) {	// tie!
+			//TODO
+		}
+	}
 }
