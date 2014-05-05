@@ -29,15 +29,15 @@ public class Square {
 	public String toString(){
 		char col = '\u0000';
 		
-		if(col == 0){
+		if(this.col == 0){
 			col = 'a';
-		}else if(col == 1){
+		}else if(this.col == 1){
 			col = 'b';
-		}else if(col == 2){
+		}else if(this.col == 2){
 			col = 'c';
-		}else if(col == 3){
+		}else if(this.col == 3){
 			col = 'd';
-		}else if(col == 4){
+		}else if(this.col == 4){
 			col = 'e';
 		}
 		return col+Integer.toString(row+1);

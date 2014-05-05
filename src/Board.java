@@ -28,7 +28,11 @@ public class Board {
 		board.move(new Move("b2-b3"));
 		System.out.println(board.toString());
 		
-		board.move(new Move("b2-b3"));
+		board.move(new Move("a5-a4"));
+		System.out.println(board.toString());
+		
+		board.move(new Move("b3-a4"));
+		System.out.println(board.toString());
 	}
 
 	public Board(String state) {
