@@ -1,5 +1,8 @@
+<<<<<<< HEAD
 import java.io.FileReader;
 import java.io.FileWriter;
+=======
+>>>>>>> branch 'master' of https://github.com/ryhaberecht/MiniChess.git
 import java.io.IOException;
 import java.io.Reader;
 import java.io.Writer;
@@ -128,6 +131,7 @@ public class Board {
 		}
 	}
 
+	@Override
 	public String toString() {
 
 		String result = moveNum + " " + onMove;
