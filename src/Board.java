@@ -149,6 +149,14 @@ public class Board {
 		squares[move.to.row][move.to.col] = piece;	// move piece?
 		squares[move.from.row][move.from.col] = '.';	// remove old piece position
 		
+		// update side for next turn
+		if (this.onMove == 'W') {
+			this.onMove = 'B';
+		}
+		else {
+			this.onMove = 'W';
+		}
+		
 		this.moveNum += 1;	// increase number of turns (moves)
 		if (this.moveNum == 40) {	// tie!
 			//TODO

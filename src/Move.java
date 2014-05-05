@@ -9,8 +9,8 @@ public class Move {
 			throw new Error("move string has invalid length = " + move.length());
 		}
 		
-		this.from = Square(move.substring(0, 2));
-		this.to = Square(move.substring(3, 5));
+		this.from = new Square(move.substring(0, 2));
+		this.to = new Square(move.substring(3, 5));
 	}
 	
 	public String toString()
