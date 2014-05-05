@@ -1,6 +1,6 @@
-import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.io.Reader;
 import java.io.Writer;
 
@@ -15,24 +15,31 @@ public class Board {
 
 		// Test
 
-		/*BufferedReader bufferRead = new BufferedReader(new InputStreamReader(System.in));
-		System.out.println("enter starting state:");
-		Board board2 = new Board(bufferRead);
-		System.out.println(board2.toString());*/
+		// reader + writer
+		Reader reader = new FileReader("input.txt");
+		Board board2 = new Board(reader);
+		System.out.println(board2.toString());
+		System.out.println();
+		reader.close();
 
+		board2.move(new Move("b1-a3"));
 
+		Writer writer = new FileWriter("output.txt");
+		board2.print(writer);
+		writer.close();
+
+		// move
 		Board board = new Board();
 		System.out.println(board.toString());
+		System.out.println();
 
-	
 		board.move(new Move("b2-b3"));
 		System.out.println(board.toString());
-		
+		System.out.println();
+
 		board.move(new Move("a5-a4"));
 		System.out.println(board.toString());
-		
-		board.move(new Move("b3-a4"));
-		System.out.println(board.toString());
+		System.out.println();
 	}
 
 	public Board(String state) {
@@ -122,13 +129,14 @@ public class Board {
 	}
 
 	public String toString() {
-		String result = moveNum + " " + onMove + "\n";
+
+		String result = moveNum + " " + onMove;
+
 		for (int row = 5; row >= 0; row--) {
+			result += "\n";
 			for (int col = 0; col < 5; col++) {
 				result += squares[row][col];
 			}
-
-			result += "\n";
 		}
 
 		return result;
