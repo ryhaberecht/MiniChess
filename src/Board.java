@@ -72,7 +72,7 @@ public class Board {
 			throw new Error("state does not have 7 lines");
 		}
 
-		this.moveNum = Integer.parseInt(lines[0].substring(0, 2));
+		this.moveNum = Integer.parseInt(lines[0].substring(0, 2).trim());
 		if (this.moveNum < 1 || this.moveNum > 40) {
 			throw new Error("moveNum impossible, < 0 or > 40! moveNum = "
 					+ this.moveNum);
