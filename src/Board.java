@@ -16,6 +16,11 @@ public class Board
 		
 	}
 	
+	public Board()
+	{
+		
+	}
+	
 	void makeBoard(String state)
 	{
 		String [] lines = state.split("\n");
