@@ -7,10 +7,11 @@ import java.io.Writer;
 public class Board {
 	char[][] squares = new char[6][5]; // number / letter -> row / column
 
-	int moveNum; // 1 to 40 (40 = draw)
+	int moveNum; // number of next move taking place. 1 to 40 (40 = draw)
 
-	char onMove; // B or W
+	char onMove; // Has B or W the next move?
 
+	// test function, no error means it works Ok
 	public static void main(String args[]) throws IOException {
 
 		// Test
@@ -42,11 +43,13 @@ public class Board {
 		System.out.println();
 	}
 
+	// create new board from state in "state"
 	public Board(String state) {
 
 		makeBoard(state);
 	}
 
+	// create new board from state in "reader"
 	public Board(Reader reader) throws IOException {
 
 		char[] cbuf = new char[39];
@@ -54,30 +57,35 @@ public class Board {
 		makeBoard(new String(cbuf));
 	}
 
+	// create new board with default state
 	public Board() {
 
 		makeBoard("1 W\nkqbnr\nppppp\n.....\n.....\nPPPPP\nRNBQK");
 	}
 
+	// create board helper function
 	private void makeBoard(String state) {
 
+		// check length of state string
 		if (state.length() != 39 && state.length() != 40) {
 			throw new Error("state does not have 39 or 40 characters but "
 					+ state.length() + ". And is: " + state);
 		}
 
 		String[] lines = state.split("\n");
-
+		// check number of lines
 		if (lines.length != 7) {
 			throw new Error("state does not have 7 lines");
 		}
 
+		// check if movement number makes sense and save
 		this.moveNum = Integer.parseInt(lines[0].substring(0, 2).trim());
 		if (this.moveNum < 1 || this.moveNum > 40) {
 			throw new Error("moveNum impossible, < 0 or > 40! moveNum = "
 					+ this.moveNum);
 		}
 
+		// check if whose next makes sense and save
 		if (this.moveNum < 10) {
 			this.onMove = lines[0].charAt(2);
 		} else {
@@ -87,6 +95,7 @@ public class Board {
 			throw new Error("onMove is not B or W");
 		}
 
+		// check if characters are a valid piece or empty and save
 		char currentChar;
 		for (int row = 5, line = 1; row >= 0; row--, line++) {
 
@@ -132,6 +141,8 @@ public class Board {
 		}
 	}
 
+	// print state into standardized string (39 or 40 characters, depending on
+	// nr. of move)
 	@Override
 	public String toString() {
 
@@ -147,6 +158,7 @@ public class Board {
 		return result;
 	}
 
+	// print state into human readable string, nicer to the eye than toString()
 	public String toHumanReadableString() {
 
 		String result = "Move Nr.: " + moveNum + "\nFor Player: "
@@ -162,18 +174,25 @@ public class Board {
 		return result += "\n  -----\n  abcde";
 	}
 
+	// print standardized string into writer
 	public void print(Writer writer) throws IOException {
 		writer.write(this.toString());
 	}
 
+	// commence movement, check if it is valid
 	public void move(Move move) {
-		char piece = squares[move.from.row][move.from.col]; // piece to be moved
+		// get piece about to be moved
+		char piece = squares[move.from.row][move.from.col];
+		
+		// moving empty space is not allowed
 		if (piece == '.') {
 			throw new Error("No piece at " + move.from.toString() + " (row = "
 					+ move.from.row + ", column = " + move.from.col + ")");
 		}
+		// determine color of piece
 		boolean pieceIsWhite = (piece >= 'A' && piece <= 'Z') ? true : false;
 
+		// check if piece color matches the color whose turn it is
 		if (pieceIsWhite && this.onMove == 'B') {
 			throw new Error(
 					"white piece to be moved although it is black's turn! Move = "
@@ -185,15 +204,14 @@ public class Board {
 							+ move.toString());
 		}
 
-		if (squares[move.to.row][move.to.col] != '.') { // new position already
-														// taken by piece
+		// new position already taken by piece
+		if (squares[move.to.row][move.to.col] != '.') {
 
-			char pieceToBeTaken = squares[move.to.row][move.to.col]; // piece to
-																		// be
-																		// taken
-			boolean pieceToBeTakenIsWhite = (pieceToBeTaken >= 'A' && pieceToBeTaken <= 'Z') ? true
-					: false;
+			// get piece to be taken
+			char pieceToBeTaken = squares[move.to.row][move.to.col];
+			boolean pieceToBeTakenIsWhite = (pieceToBeTaken >= 'A' && pieceToBeTaken <= 'Z') ? true : false;
 
+			// taking a piece of the same color is not allowed
 			if (pieceIsWhite && pieceToBeTakenIsWhite) {
 				throw new Error(
 						"white piece to be taken by white piece! Move = "
@@ -205,12 +223,14 @@ public class Board {
 								+ move.toString());
 			}
 
+			// take piece
 			// TODO figur schlagen
 		}
 
-		squares[move.to.row][move.to.col] = piece; // move piece?
-		squares[move.from.row][move.from.col] = '.'; // remove old piece
-														// position
+		// move piece to new position
+		squares[move.to.row][move.to.col] = piece;
+		// remove old piece position
+		squares[move.from.row][move.from.col] = '.';
 
 		// update side for next turn
 		if (this.onMove == 'W') {
@@ -219,10 +239,12 @@ public class Board {
 			this.onMove = 'W';
 		}
 
-		this.moveNum += 1; // increase number of turns (moves)
-		if (this.moveNum == 40) { // tie!
+		// increase number of turns (moves)
+		this.moveNum += 1;
+		// tie?
+		if (this.moveNum == 40) {
 			// TODO
-			
+
 		}
 	}
 }
