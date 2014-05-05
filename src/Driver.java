@@ -23,14 +23,4 @@ public class Driver {
 		} while (scanIn.hasNextLine());
 		scanIn.close();
 	}
-	
-	void scan(ArrayList<Move> moves, Square start, int dr, int dc, boolean caputre, boolean single, boolean capture_only)
-	{
-		
-	}
-	
-	public ArrayList<Move> moves()
-	{
-		return null;
-	}
 }

@@ -3,6 +3,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Reader;
 import java.io.Writer;
+import java.util.ArrayList;
 
 public class Board {
 	char[][] squares = new char[6][5]; // number / letter -> row / column
@@ -183,14 +184,14 @@ public class Board {
 	public void move(Move move) {
 		// get piece about to be moved
 		char piece = squares[move.from.row][move.from.col];
-		
+
 		// moving empty space is not allowed
 		if (piece == '.') {
 			throw new Error("No piece at " + move.from.toString() + " (row = "
 					+ move.from.row + ", column = " + move.from.col + ")");
 		}
 		// determine color of piece
-		boolean pieceIsWhite = (piece >= 'A' && piece <= 'Z') ? true : false;
+		boolean pieceIsWhite = isPieceWhite(piece);
 
 		// check if piece color matches the color whose turn it is
 		if (pieceIsWhite && this.onMove == 'B') {
@@ -209,7 +210,8 @@ public class Board {
 
 			// get piece to be taken
 			char pieceToBeTaken = squares[move.to.row][move.to.col];
-			boolean pieceToBeTakenIsWhite = (pieceToBeTaken >= 'A' && pieceToBeTaken <= 'Z') ? true : false;
+			boolean pieceToBeTakenIsWhite = (pieceToBeTaken >= 'A' && pieceToBeTaken <= 'Z') ? true
+					: false;
 
 			// taking a piece of the same color is not allowed
 			if (pieceIsWhite && pieceToBeTakenIsWhite) {
@@ -246,5 +248,70 @@ public class Board {
 			// TODO
 
 		}
+	}
+
+	// add all legal moves for a piece from "start" in direction "dr"/"dc" into
+	// "moves".
+	// "capture" tells that the piece may capture during a move or not.
+	// "single" tells that the piece may only move one square.
+	// "capture_only" tells that the piece may only move if capturing.
+	public void scan(ArrayList<Move> moves, Square start, int dr, int dc,
+			boolean capture, boolean single, boolean capture_only) {
+
+		// check color of piece
+		boolean pieceIsWhite = isPieceWhite(squares[start.row][start.col]);
+
+		// initialise next square with old square
+		int nextColumn = start.col;
+		int nextRow = start.row;
+
+		// walk along column
+		nextColumn += dc;
+		// check if off board in column
+		if (nextColumn < 0 || nextColumn > 4) {
+			return; // of board, stop search
+		}
+
+		// walk along row
+		nextRow += dr;
+		// check if off board in row
+		if (nextRow < 0 || nextRow > 5) {
+			return; // of board, stop search
+		}
+
+		// check if run into piece
+		char nextPiece = squares[nextRow][nextColumn];
+		if (nextPiece != '.') {
+
+			// in what kind of piece have i run?
+			boolean pieceToBeTakenIsWhite = isPieceWhite(squares[nextRow][nextColumn]);
+
+			if ((pieceToBeTakenIsWhite ^ pieceIsWhite)) { // hit enemy piece
+
+				if (capture) { // may capture enemy
+
+					moves.add(new Move(start + "-"
+							+ new Square(nextColumn, nextRow))); // capture
+					return; // stop
+
+				} else { // may not capture enemy
+					return; // stop
+				}
+			} else { // hit own piece
+				return; // stop
+			}
+		} else { // have not run into other piece
+
+			moves.add(new Move(start + "-" + new Square(nextColumn, nextRow))); // capture
+			// TODO
+		}
+	}
+
+	public ArrayList<Move> moves() {
+		return null;
+	}
+
+	private boolean isPieceWhite(char piece) {
+		return (piece >= 'A' && piece <= 'Z') ? true : false;
 	}
 }
