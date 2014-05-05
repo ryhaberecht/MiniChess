@@ -1,9 +1,10 @@
 
 public class Board
 {
-	char[][] squares = new char[5][6];	// letter / number -> column / row
+	char[][] squares = new char[6][5];	// number / letter -> row / column
 	
 	int moveNumber;
 	
 	char whoseMove;
 }
+
