@@ -270,6 +270,18 @@ public class Board
 
 		// calculate all valid moves for next turn
 		this.legalMovesForNextTurn = getAllLegalMoves(this.onMove);
+		
+		// if there are no valid moves for next turn, current turns player wins
+		if (this.legalMovesForNextTurn.isEmpty()) {
+			
+			if (this.onMove == 'W') {
+				returnValue = 'B';
+			}
+			else {
+				returnValue = 'W';
+			}
+			System.out.println("No valid turns for " + this.onMove + " in next turn. " + returnValue + " wins!");	//TODO
+		}
 
 		return returnValue;
 	}
