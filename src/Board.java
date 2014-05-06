@@ -258,10 +258,6 @@ public class Board
 	// "capture_only" tells that the piece may only move if capturing.
 	public void scan(ArrayList<Move> moves, Square start, int dr, int dc, boolean capture, boolean single, boolean capture_only)
 	{
-
-		// determine color of piece
-		boolean pieceIsWhite = isPieceWhite(squares[start.row][start.col]);
-
 		// initialise next square with old square
 		int nextColumn = start.col;
 		int nextRow = start.row;
@@ -283,9 +279,11 @@ public class Board
 
 			// check if run into piece
 			char nextPiece = squares[nextRow][nextColumn];
-			if (nextPiece != '.') {
+			if (nextPiece != '.') { // have run into other piece
 
 				// in what kind of piece have i run?
+				// determine color of piece
+				boolean pieceIsWhite = isPieceWhite(squares[start.row][start.col]);
 				boolean pieceToBeTakenIsWhite = isPieceWhite(squares[nextRow][nextColumn]);
 
 				if ((pieceToBeTakenIsWhite ^ pieceIsWhite)) { // hit enemy piece
@@ -294,7 +292,6 @@ public class Board
 
 						moves.add(new Move(start, new Square(nextColumn, nextRow))); // capture
 						break; // stop
-
 					}
 					else { // may not capture enemy
 						break; // stop
@@ -314,8 +311,7 @@ public class Board
 				}
 			}
 		}
-		while (!single); // repeat scanning steps until stop condition met or
-							// single step taken
+		while (!single); // repeat scanning steps until stop condition met or single step taken
 	}
 
 	public ArrayList<Move> moves()
