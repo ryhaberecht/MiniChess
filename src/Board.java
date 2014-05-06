@@ -89,8 +89,8 @@ public class Board
 
 		// check if movement number makes sense and save
 		this.moveNum = Integer.parseInt(lines[0].substring(0, 2).trim());
-		if (this.moveNum < 1 || this.moveNum > 40) {
-			throw new Error("moveNum impossible, < 0 or > 40! moveNum = " + this.moveNum);
+		if (this.moveNum < 1 || this.moveNum > 80) {
+			throw new Error("moveNum impossible, < 0 or > 80! moveNum = " + this.moveNum);
 		}
 
 		// check if whose next makes sense and save
@@ -106,9 +106,9 @@ public class Board
 
 		// check if characters are a valid piece or empty and save
 		char currentChar;
-		for (int row = 5, line = 1; row >= 0; row--, line++) {
+		for (int row = Constants.MAX_ROW, line = 1; row >= Constants.MIN_ROW; row--, line++) {
 
-			for (int column = 0; column < 5; column++) {
+			for (int column = Constants.MIN_COLUMN; column <= Constants.MAX_COLUMN; column++) {
 
 				currentChar = lines[line].charAt(column);
 
@@ -156,8 +156,7 @@ public class Board
 	@Override
 	public String toString()
 	{
-
-		String result = moveNum + " " + onMove;
+		String result = ((this.onMove == 'W') ? ((this.moveNum+1)/2) : (this.moveNum/2)) + " " + this.onMove;
 
 		for (int row = Constants.MAX_ROW; row >= Constants.MIN_ROW; row--) {
 			result += "\n";
@@ -173,7 +172,7 @@ public class Board
 	public String toHumanReadableString()
 	{
 
-		String result = "Move Nr.: " + moveNum + "\nFor Player: " + (onMove == 'W' ? "White" : "Black") + "\n";
+		String result = "Move Nr.: " + ((this.onMove == 'W') ? ((this.moveNum+1)/2) : (this.moveNum/2)) + "\nFor Player: " + (this.onMove == 'W' ? "White" : "Black") + "\n";
 
 		for (int row = Constants.MAX_ROW; row >= Constants.MIN_ROW; row--) {
 			result += "\n" + (row + 1) + "|";
@@ -269,7 +268,7 @@ public class Board
 		// increase number of turns (moves)
 		this.moveNum += 1;
 		// tie?
-		if (this.moveNum == 41) {
+		if (this.moveNum == 81) {
 			returnValue = '='; // game ended with tie
 		}
 
