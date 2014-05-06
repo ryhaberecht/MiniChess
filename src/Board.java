@@ -198,7 +198,7 @@ public class Board
 		if (!this.legalMovesForNextTurn.contains(move)) { // desired move is not contained in list of legal moves for next turn
 			throw new Error("Illegal move: " + move.toString());
 		}
-		else {	// move is legal
+		else { // move is legal
 			return move(move);
 		}
 	}
@@ -270,17 +270,17 @@ public class Board
 
 		// calculate all valid moves for next turn
 		this.legalMovesForNextTurn = getAllLegalMoves(this.onMove);
-		
+
 		// if there are no valid moves for next turn, current turns player wins
 		if (this.legalMovesForNextTurn.isEmpty()) {
-			
+
 			if (this.onMove == 'W') {
 				returnValue = 'B';
 			}
 			else {
 				returnValue = 'W';
 			}
-			System.out.println("No valid turns for " + this.onMove + " in next turn. " + returnValue + " wins!");	//TODO
+			System.out.println("No valid turns for " + this.onMove + " in next turn. " + returnValue + " wins!"); // TODO
 		}
 
 		return returnValue;
@@ -305,11 +305,6 @@ public class Board
 	// "capture_only" tells that the piece may only move if capturing.
 	public void scan(ArrayList<Move> moves, Square start, int dr, int dc, boolean capture, boolean single, boolean capture_only)
 	{
-		// abort if no movement to be taken
-		if (dr == 0 && dc == 0) {
-			return;
-		}
-
 		// initialise next square with old square
 		int nextColumn = start.col;
 		int nextRow = start.row;
@@ -399,10 +394,73 @@ public class Board
 	}
 
 	// appends legal moves of a piece at coordinate to allMoves
-	public void getLegalMoves(char piece, Square squarecoordinate, ArrayList<Move> allMoves)
+	public void getLegalMoves(char piece, Square coordinate, ArrayList<Move> allMoves)
 	{
-		// TODO Auto-generated method stub
-
+		switch (piece) {
+		case 'q':
+		case 'Q':
+			scan(allMoves, coordinate, 0, 1, true, false, false);
+			scan(allMoves, coordinate, 0, -1, true, false, false);
+			scan(allMoves, coordinate, 1, 0, true, false, false);
+			scan(allMoves, coordinate, -1, 0, true, false, false);
+			scan(allMoves, coordinate, 1, 1, true, false, false);
+			scan(allMoves, coordinate, 1, -1, true, false, false);
+			scan(allMoves, coordinate, -1, 1, true, false, false);
+			scan(allMoves, coordinate, -1, -1, true, false, false);
+			break;
+		case 'k':
+		case 'K':
+			scan(allMoves, coordinate, 0, 1, true, true, false);
+			scan(allMoves, coordinate, 0, -1, true, true, false);
+			scan(allMoves, coordinate, 1, 0, true, true, false);
+			scan(allMoves, coordinate, -1, 0, true, true, false);
+			scan(allMoves, coordinate, 1, 1, true, true, false);
+			scan(allMoves, coordinate, 1, -1, true, true, false);
+			scan(allMoves, coordinate, -1, 1, true, true, false);
+			scan(allMoves, coordinate, -1, -1, true, true, false);
+			break;
+		case 'r':
+		case 'R':
+			scan(allMoves, coordinate, 0, 1, true, false, false);
+			scan(allMoves, coordinate, 0, -1, true, false, false);
+			scan(allMoves, coordinate, 1, 0, true, false, false);
+			scan(allMoves, coordinate, -1, 0, true, false, false);
+			break;
+		case 'b':
+		case 'B':
+			// diagonal
+			scan(allMoves, coordinate, -1, -1, true, false, false);
+			scan(allMoves, coordinate, -1, 1, true, false, false);
+			scan(allMoves, coordinate, 1, -1, true, false, false);
+			scan(allMoves, coordinate, 1, 1, true, false, false);
+			// straight
+			scan(allMoves, coordinate, 1, 0, false, true, false);
+			scan(allMoves, coordinate, -1, 0, false, true, false);
+			scan(allMoves, coordinate, 0, 1, false, true, false);
+			scan(allMoves, coordinate, 0, -1, false, true, false);
+			break;
+		case 'n':
+		case 'N':
+			scan(allMoves, coordinate, 1, 2, true, true, false);
+			scan(allMoves, coordinate, 1, -2, true, true, false);
+			scan(allMoves, coordinate, -1, 2, true, true, false);
+			scan(allMoves, coordinate, -1, -2, true, true, false);
+			scan(allMoves, coordinate, 2, 1, true, true, false);
+			scan(allMoves, coordinate, 2, -1, true, true, false);
+			scan(allMoves, coordinate, -2, 1, true, true, false);
+			scan(allMoves, coordinate, -2, -1, true, true, false);
+			break;
+		case 'p':
+			scan(allMoves, coordinate, -1, 0, false, true, false);
+			scan(allMoves, coordinate, -1, 1, true, true, true);
+			scan(allMoves, coordinate, -1, -1, true, true, true);
+			break;
+		case 'P':
+			scan(allMoves, coordinate, 1, 0, false, true, false);
+			scan(allMoves, coordinate, 1, 1, true, true, true);
+			scan(allMoves, coordinate, 1, -1, true, true, true);
+			break;
+		}
 	}
 
 	private boolean isPieceWhite(char piece)
