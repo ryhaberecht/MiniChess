@@ -25,4 +25,20 @@ public class Move{
 
 		return this.from.toString() + "-" + this.to.toString();
 	}
+
+	public boolean equals(Move o)
+	{
+		if (o == null) {
+			return false;
+		}
+		else if (o.from.col == this.from.col 
+				&& o.from.row == this.from.row 
+				&& o.to.col == this.to.col
+				&& o.to.row == this.to.row) {
+			return true;
+		}
+		else {
+			return false;
+		}
+	}
 }

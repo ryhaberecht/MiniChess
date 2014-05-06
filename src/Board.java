@@ -14,6 +14,8 @@ public class Board
 
 	char onMove; // Has B or W the next move?
 
+	ArrayList<Move> legalMovesForNextTurn;
+
 	// test function, no error means it works Ok
 	public static void main(String args[]) throws IOException
 	{
@@ -145,19 +147,21 @@ public class Board
 				this.squares[row][column] = currentChar;
 			}
 		}
+
+		// calculate all valid moves for next turn
+		this.legalMovesForNextTurn = getAllLegalMoves(this.onMove);
 	}
 
-	// print state into standardized string (39 or 40 characters, depending on
-	// nr. of move)
+	// print state into standardized string (39 or 40 characters, depending on nr. of move)
 	@Override
 	public String toString()
 	{
 
 		String result = moveNum + " " + onMove;
 
-		for (int row = 5; row >= 0; row--) {
+		for (int row = Constants.MAX_ROW; row >= Constants.MIN_ROW; row--) {
 			result += "\n";
-			for (int col = 0; col < 5; col++) {
+			for (int col = Constants.MIN_COLUMN; col <= Constants.MAX_COLUMN; col++) {
 				result += squares[row][col];
 			}
 		}
@@ -171,9 +175,9 @@ public class Board
 
 		String result = "Move Nr.: " + moveNum + "\nFor Player: " + (onMove == 'W' ? "White" : "Black") + "\n";
 
-		for (int row = 5; row >= 0; row--) {
+		for (int row = Constants.MAX_ROW; row >= Constants.MIN_ROW; row--) {
 			result += "\n" + (row + 1) + "|";
-			for (int col = 0; col < 5; col++) {
+			for (int col = Constants.MIN_COLUMN; col <= Constants.MAX_COLUMN; col++) {
 				result += squares[row][col];
 			}
 		}
@@ -188,45 +192,60 @@ public class Board
 		writer.write(this.toString());
 	}
 
-	// commence movement, check if it is valid
-	public void move(Move move)
+	public char checkedMove(Move move)
 	{
+		// check if move is legal
+		if (!this.legalMovesForNextTurn.contains(move)) { // desired move is not contained in list of legal moves for next turn
+			throw new Error("Illegal move: " + move.toString());
+		}
+		else {	// move is legal
+			return move(move);
+		}
+	}
+
+	// commence movement, check if it is valid.
+	// returns '?' if game did not end, '=' for a tie, 'W' if white wins and 'B' if black wins.
+	public char move(Move move)
+	{
+		char returnValue = '?'; // per default no winning-condition is met, should continue game
 
 		// get piece about to be moved
 		char piece = squares[move.from.row][move.from.col];
 
-		// moving empty space is not allowed
-		if (piece == '.') {
-			throw new Error("No piece at " + move.from.toString() + " (row = " + move.from.row + ", column = " + move.from.col + ")");
-		}
-		// determine color of piece
-		boolean pieceIsWhite = isPieceWhite(piece);
-
-		// check if piece color matches the color whose turn it is
-		if (pieceIsWhite && this.onMove == 'B') {
-			throw new Error("white piece to be moved although it is black's turn! Move = " + move.toString());
-		}
-		if (!pieceIsWhite && this.onMove == 'W') {
-			throw new Error("black piece to be moved although it is white's turn! Move = " + move.toString());
-		}
+		/*
+		 * // moving empty space is not allowed if (piece == '.') { throw new Error("No piece at " + move.from.toString() + " (row = " + move.from.row
+		 * + ", column = " + move.from.col + ")"); } // determine color of piece boolean pieceIsWhite = isPieceWhite(piece); // check if piece color
+		 * matches the color whose turn it is if (pieceIsWhite && this.onMove == 'B') { throw new
+		 * Error("white piece to be moved although it is black's turn! Move = " + move.toString()); } if (!pieceIsWhite && this.onMove == 'W') { throw
+		 * new Error("black piece to be moved although it is white's turn! Move = " + move.toString()); }
+		 */
 
 		// new position already taken by piece
 		if (squares[move.to.row][move.to.col] != '.') {
 
 			// get piece to be taken
 			char pieceToBeTaken = squares[move.to.row][move.to.col];
-			boolean pieceToBeTakenIsWhite = (pieceToBeTaken >= 'A' && pieceToBeTaken <= 'Z') ? true : false;
-
-			// taking a piece of the same color is not allowed
-			if (pieceIsWhite && pieceToBeTakenIsWhite) {
-				throw new Error("white piece to be taken by white piece! Move = " + move.toString());
-			}
-			if (!pieceIsWhite && !pieceToBeTakenIsWhite) {
-				throw new Error("black piece to be taken by black piece! Move = " + move.toString());
-			}
+			/*
+			 * boolean pieceToBeTakenIsWhite = isPieceWhite(pieceToBeTaken) ? true : false; // taking a piece of the same color is not allowed if
+			 * (pieceIsWhite && pieceToBeTakenIsWhite) { throw new Error("white piece to be taken by white piece! Move = " + move.toString()); } if
+			 * (!pieceIsWhite && !pieceToBeTakenIsWhite) { throw new Error("black piece to be taken by black piece! Move = " + move.toString()); }
+			 */
 
 			// take piece
-			// TODO figur schlagen
+			if (pieceToBeTaken == 'k') {
+				returnValue = 'W'; // black king taken, white wins!
+			}
+			else if (pieceToBeTaken == 'K') {
+				returnValue = 'B'; // white king taken, black wins!
+			}
+		}
+
+		// turn pawn into queen at the respective end of the board
+		if (piece == 'P' && move.to.row == Constants.MAX_ROW) { // white pawen reached upper end of board
+			piece = 'Q'; // turn pawn into queen
+		}
+		else if (piece == 'p' && move.to.row == Constants.MIN_ROW) { // black pawen reached lower end of board
+			piece = 'q'; // turn pawn into queen
 		}
 
 		// move piece to new position
@@ -245,10 +264,38 @@ public class Board
 		// increase number of turns (moves)
 		this.moveNum += 1;
 		// tie?
-		if (this.moveNum == 40) {
-			// TODO
-
+		if (this.moveNum == 41) {
+			returnValue = '='; // game ended with tie
 		}
+
+		// calculate all valid moves for next turn
+		this.legalMovesForNextTurn = getAllLegalMoves(this.onMove);
+		
+		// if there are no valid moves for next turn, current turns player wins
+		if (this.legalMovesForNextTurn.isEmpty()) {
+			
+			if (this.onMove == 'W') {
+				returnValue = 'B';
+			}
+			else {
+				returnValue = 'W';
+			}
+			System.out.println("No valid turns for " + this.onMove + " in next turn. " + returnValue + " wins!");	//TODO
+		}
+
+		return returnValue;
+	}
+
+	// returns a String of valid moves the current player could make next
+	public String printValidMovesForNextTurn()
+	{
+		String output = "Valid moves: ";
+
+		for (Move move : this.legalMovesForNextTurn) {
+			output += move.toString() + ", ";
+		}
+
+		return output;
 	}
 
 	// add all legal moves for a piece from "start" in direction "dr"/"dc" into
@@ -258,9 +305,10 @@ public class Board
 	// "capture_only" tells that the piece may only move if capturing.
 	public void scan(ArrayList<Move> moves, Square start, int dr, int dc, boolean capture, boolean single, boolean capture_only)
 	{
-
-		// determine color of piece
-		boolean pieceIsWhite = isPieceWhite(squares[start.row][start.col]);
+		// abort if no movement to be taken
+		if (dr == 0 && dc == 0) {
+			return;
+		}
 
 		// initialise next square with old square
 		int nextColumn = start.col;
@@ -270,22 +318,24 @@ public class Board
 			// walk along column
 			nextColumn += dc;
 			// check if off board in column
-			if (nextColumn < 0 || nextColumn > 4) {
+			if (nextColumn < Constants.MIN_COLUMN || nextColumn > Constants.MAX_COLUMN) {
 				return; // off board, stop search
 			}
 
 			// walk along row
 			nextRow += dr;
 			// check if off board in row
-			if (nextRow < 0 || nextRow > 5) {
+			if (nextRow < Constants.MIN_ROW || nextRow > Constants.MAX_ROW) {
 				return; // off board, stop search
 			}
 
 			// check if run into piece
 			char nextPiece = squares[nextRow][nextColumn];
-			if (nextPiece != '.') {
+			if (nextPiece != '.') { // have run into other piece
 
 				// in what kind of piece have i run?
+				// determine color of piece
+				boolean pieceIsWhite = isPieceWhite(squares[start.row][start.col]);
 				boolean pieceToBeTakenIsWhite = isPieceWhite(squares[nextRow][nextColumn]);
 
 				if ((pieceToBeTakenIsWhite ^ pieceIsWhite)) { // hit enemy piece
@@ -294,7 +344,6 @@ public class Board
 
 						moves.add(new Move(start, new Square(nextColumn, nextRow))); // capture
 						break; // stop
-
 					}
 					else { // may not capture enemy
 						break; // stop
@@ -314,14 +363,46 @@ public class Board
 				}
 			}
 		}
-		while (!single); // repeat scanning steps until stop condition met or
-							// single step taken
+		while (!single); // repeat scanning steps until stop condition met or single step taken
 	}
 
-	public ArrayList<Move> moves()
+	// returns a list of all legal moves
+	public ArrayList<Move> getAllLegalMoves(char color)
 	{
+		// color does not exist
+		if (color != 'B' && color != 'W') {
+			throw new Error("color is not B or W");
+		}
 
-		return null;
+		ArrayList<Move> legalMoves = new ArrayList<Move>();
+
+		// scan all squares for a piece of my color
+		char piece;
+		for (int row = Constants.MIN_ROW; row <= Constants.MAX_ROW; row++) {
+
+			for (int column = Constants.MIN_COLUMN; column <= Constants.MAX_COLUMN; column++) {
+
+				piece = squares[row][column]; // potential piece
+				// there is a piece
+				if (piece != '.') {
+
+					// piece is of my color
+					if ((isPieceWhite(piece) && color == 'W') || (!isPieceWhite(piece) && color == 'B')) {
+
+						getLegalMoves(piece, new Square(column, row), legalMoves);
+					}
+				}
+			}
+		}
+
+		return legalMoves;
+	}
+
+	// appends legal moves of a piece at coordinate to allMoves
+	public void getLegalMoves(char piece, Square squarecoordinate, ArrayList<Move> allMoves)
+	{
+		// TODO Auto-generated method stub
+
 	}
 
 	private boolean isPieceWhite(char piece)
