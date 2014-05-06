@@ -22,8 +22,8 @@ public class Square {
 	}
 	
 	Square(int col, int row){
-		this.col = col-1;
-		this.row = row-1;
+		this.col = col;
+		this.row = row;
 	}
 	
 	public String toString(){
