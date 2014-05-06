@@ -103,6 +103,9 @@ public class Board
 		if (this.onMove != 'B' && this.onMove != 'W') {
 			throw new Error("onMove is not B or W");
 		}
+		
+		// correct this.moveNum because it is 40 moves each
+		this.moveNum = ((this.onMove == 'W') ? ((this.moveNum*2)-1) : (this.moveNum*2));
 
 		// check if characters are a valid piece or empty and save
 		char currentChar;
