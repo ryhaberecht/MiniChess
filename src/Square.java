@@ -41,6 +41,5 @@ public class Square {
 			col = 'e';
 		}
 		return col+Integer.toString(row+1);
-		
 	}
 }

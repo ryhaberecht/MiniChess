@@ -1,4 +1,4 @@
-import java.util.ArrayList;
+
 
 
 public class Move {
@@ -15,6 +15,7 @@ public class Move {
 		this.to = new Square(move.substring(3, 5));
 	}
 	
+	@Override
 	public String toString()
 	{
 		return this.from.toString() + "-" + this.to.toString();
