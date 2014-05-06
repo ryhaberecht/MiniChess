@@ -6,6 +6,10 @@ public class Square
 	Square(String command)
 	{
 		this.row = Integer.parseInt(command.substring(1, 2)) - 1;
+		if (this.row < Constants.MIN_ROW || this.row > Constants.MAX_ROW) {
+			throw new Error("Unknown row: " + this.row);
+		}
+		
 		char col = command.charAt(0);
 		if (col == 'a' || col == 'A') {
 			this.col = 0;
@@ -29,6 +33,9 @@ public class Square
 
 	Square(int col, int row)
 	{
+		if (col < Constants.MIN_COLUMN || col > Constants.MAX_COLUMN || row < Constants.MIN_ROW || row > Constants.MAX_ROW) {
+			throw new Error("Impossible row/column: " + row + " " + col);
+		}
 		this.col = col;
 		this.row = row;
 	}

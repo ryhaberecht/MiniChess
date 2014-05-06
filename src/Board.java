@@ -171,9 +171,9 @@ public class Board
 
 		String result = "Move Nr.: " + moveNum + "\nFor Player: " + (onMove == 'W' ? "White" : "Black") + "\n";
 
-		for (int row = 5; row >= 0; row--) {
+		for (int row = Constants.MAX_ROW; row >= Constants.MIN_ROW; row--) {
 			result += "\n" + (row + 1) + "|";
-			for (int col = 0; col < 5; col++) {
+			for (int col = Constants.MIN_COLUMN; col <= Constants.MAX_COLUMN; col++) {
 				result += squares[row][col];
 			}
 		}
@@ -215,7 +215,7 @@ public class Board
 
 			// get piece to be taken
 			char pieceToBeTaken = squares[move.to.row][move.to.col];
-			boolean pieceToBeTakenIsWhite = (pieceToBeTaken >= 'A' && pieceToBeTaken <= 'Z') ? true : false;
+			boolean pieceToBeTakenIsWhite = isPieceWhite(pieceToBeTaken) ? true : false;
 
 			// taking a piece of the same color is not allowed
 			if (pieceIsWhite && pieceToBeTakenIsWhite) {
@@ -266,14 +266,14 @@ public class Board
 			// walk along column
 			nextColumn += dc;
 			// check if off board in column
-			if (nextColumn < 0 || nextColumn > 4) {
+			if (nextColumn < Constants.MIN_COLUMN || nextColumn > Constants.MAX_COLUMN) {
 				return; // off board, stop search
 			}
 
 			// walk along row
 			nextRow += dr;
 			// check if off board in row
-			if (nextRow < 0 || nextRow > 5) {
+			if (nextRow < Constants.MIN_ROW || nextRow > Constants.MAX_ROW) {
 				return; // off board, stop search
 			}
 
@@ -314,10 +314,43 @@ public class Board
 		while (!single); // repeat scanning steps until stop condition met or single step taken
 	}
 
-	public ArrayList<Move> moves()
+	// returns a list of all legal moves
+	public ArrayList<Move> getAllLegalMoves(char color)
 	{
+		// color does not exist
+		if (color != 'B' && color != 'W') {
+			throw new Error("color is not B or W");
+		}
+		
+		ArrayList<Move> legalMoves = new ArrayList<Move>();
+		
+		// scan all squares for a piece of my color
+		char piece;
+		for (int row = Constants.MIN_ROW; row <= Constants.MAX_ROW; row++) {
+			
+			for (int column = Constants.MIN_COLUMN; column <= Constants.MAX_COLUMN; column++) {
+				
+				piece = squares[row][column];	// potential piece
+				// there is a piece
+				if (piece != '.') {
+					
+					// piece is of my color
+					if ((isPieceWhite(piece) && color == 'W') || (!isPieceWhite(piece) && color == 'B')) {
+						
+						getLegalMoves(piece, new Square(column, row), legalMoves);
+					}
+				}
+			}
+		}
 
-		return null;
+		return legalMoves;
+	}
+
+	// appends legal moves of a piece at coordinate to allMoves
+	public void getLegalMoves(char piece, Square squarecoordinate, ArrayList<Move> allMoves)
+	{
+		// TODO Auto-generated method stub
+		
 	}
 
 	private boolean isPieceWhite(char piece)
