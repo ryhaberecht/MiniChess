@@ -5,7 +5,9 @@ import java.io.Reader;
 import java.io.Writer;
 import java.util.ArrayList;
 
-public class Board {
+public class Board
+{
+
 	char[][] squares = new char[6][5]; // number / letter -> row / column
 
 	int moveNum; // number of next move taking place. 1 to 40 (40 = draw)
@@ -13,7 +15,8 @@ public class Board {
 	char onMove; // Has B or W the next move?
 
 	// test function, no error means it works Ok
-	public static void main(String args[]) throws IOException {
+	public static void main(String args[]) throws IOException
+	{
 
 		// Test
 
@@ -45,13 +48,15 @@ public class Board {
 	}
 
 	// create new board from state in "state"
-	public Board(String state) {
+	public Board(String state)
+	{
 
 		makeBoard(state);
 	}
 
 	// create new board from state in "reader"
-	public Board(Reader reader) throws IOException {
+	public Board(Reader reader) throws IOException
+	{
 
 		char[] cbuf = new char[39];
 		reader.read(cbuf);
@@ -59,18 +64,19 @@ public class Board {
 	}
 
 	// create new board with default state
-	public Board() {
+	public Board()
+	{
 
 		makeBoard("1 W\nkqbnr\nppppp\n.....\n.....\nPPPPP\nRNBQK");
 	}
 
 	// create board helper function
-	private void makeBoard(String state) {
+	private void makeBoard(String state)
+	{
 
 		// check length of state string
 		if (state.length() != 39 && state.length() != 40) {
-			throw new Error("state does not have 39 or 40 characters but "
-					+ state.length() + ". And is: " + state);
+			throw new Error("state does not have 39 or 40 characters but " + state.length() + ". And is: " + state);
 		}
 
 		String[] lines = state.split("\n");
@@ -82,14 +88,14 @@ public class Board {
 		// check if movement number makes sense and save
 		this.moveNum = Integer.parseInt(lines[0].substring(0, 2).trim());
 		if (this.moveNum < 1 || this.moveNum > 40) {
-			throw new Error("moveNum impossible, < 0 or > 40! moveNum = "
-					+ this.moveNum);
+			throw new Error("moveNum impossible, < 0 or > 40! moveNum = " + this.moveNum);
 		}
 
 		// check if whose next makes sense and save
 		if (this.moveNum < 10) {
 			this.onMove = lines[0].charAt(2);
-		} else {
+		}
+		else {
 			this.onMove = lines[0].charAt(3);
 		}
 		if (this.onMove != 'B' && this.onMove != 'W') {
@@ -133,8 +139,7 @@ public class Board {
 					break;
 
 				default:
-					throw new Error("this char does not exist on a board: "
-							+ currentChar);
+					throw new Error("this char does not exist on a board: " + currentChar);
 				}
 
 				this.squares[row][column] = currentChar;
@@ -145,7 +150,8 @@ public class Board {
 	// print state into standardized string (39 or 40 characters, depending on
 	// nr. of move)
 	@Override
-	public String toString() {
+	public String toString()
+	{
 
 		String result = moveNum + " " + onMove;
 
@@ -160,10 +166,10 @@ public class Board {
 	}
 
 	// print state into human readable string, nicer to the eye than toString()
-	public String toHumanReadableString() {
+	public String toHumanReadableString()
+	{
 
-		String result = "Move Nr.: " + moveNum + "\nFor Player: "
-				+ (onMove == 'W' ? "White" : "Black") + "\n";
+		String result = "Move Nr.: " + moveNum + "\nFor Player: " + (onMove == 'W' ? "White" : "Black") + "\n";
 
 		for (int row = 5; row >= 0; row--) {
 			result += "\n" + (row + 1) + "|";
@@ -176,33 +182,32 @@ public class Board {
 	}
 
 	// print standardized string into writer
-	public void print(Writer writer) throws IOException {
+	public void print(Writer writer) throws IOException
+	{
+
 		writer.write(this.toString());
 	}
 
 	// commence movement, check if it is valid
-	public void move(Move move) {
+	public void move(Move move)
+	{
+
 		// get piece about to be moved
 		char piece = squares[move.from.row][move.from.col];
 
 		// moving empty space is not allowed
 		if (piece == '.') {
-			throw new Error("No piece at " + move.from.toString() + " (row = "
-					+ move.from.row + ", column = " + move.from.col + ")");
+			throw new Error("No piece at " + move.from.toString() + " (row = " + move.from.row + ", column = " + move.from.col + ")");
 		}
 		// determine color of piece
 		boolean pieceIsWhite = isPieceWhite(piece);
 
 		// check if piece color matches the color whose turn it is
 		if (pieceIsWhite && this.onMove == 'B') {
-			throw new Error(
-					"white piece to be moved although it is black's turn! Move = "
-							+ move.toString());
+			throw new Error("white piece to be moved although it is black's turn! Move = " + move.toString());
 		}
 		if (!pieceIsWhite && this.onMove == 'W') {
-			throw new Error(
-					"black piece to be moved although it is white's turn! Move = "
-							+ move.toString());
+			throw new Error("black piece to be moved although it is white's turn! Move = " + move.toString());
 		}
 
 		// new position already taken by piece
@@ -210,19 +215,14 @@ public class Board {
 
 			// get piece to be taken
 			char pieceToBeTaken = squares[move.to.row][move.to.col];
-			boolean pieceToBeTakenIsWhite = (pieceToBeTaken >= 'A' && pieceToBeTaken <= 'Z') ? true
-					: false;
+			boolean pieceToBeTakenIsWhite = (pieceToBeTaken >= 'A' && pieceToBeTaken <= 'Z') ? true : false;
 
 			// taking a piece of the same color is not allowed
 			if (pieceIsWhite && pieceToBeTakenIsWhite) {
-				throw new Error(
-						"white piece to be taken by white piece! Move = "
-								+ move.toString());
+				throw new Error("white piece to be taken by white piece! Move = " + move.toString());
 			}
 			if (!pieceIsWhite && !pieceToBeTakenIsWhite) {
-				throw new Error(
-						"black piece to be taken by black piece! Move = "
-								+ move.toString());
+				throw new Error("black piece to be taken by black piece! Move = " + move.toString());
 			}
 
 			// take piece
@@ -237,7 +237,8 @@ public class Board {
 		// update side for next turn
 		if (this.onMove == 'W') {
 			this.onMove = 'B';
-		} else {
+		}
+		else {
 			this.onMove = 'W';
 		}
 
@@ -255,63 +256,78 @@ public class Board {
 	// "capture" tells that the piece may capture during a move or not.
 	// "single" tells that the piece may only move one square.
 	// "capture_only" tells that the piece may only move if capturing.
-	public void scan(ArrayList<Move> moves, Square start, int dr, int dc,
-			boolean capture, boolean single, boolean capture_only) {
+	public void scan(ArrayList<Move> moves, Square start, int dr, int dc, boolean capture, boolean single, boolean capture_only)
+	{
 
-		// check color of piece
+		// determine color of piece
 		boolean pieceIsWhite = isPieceWhite(squares[start.row][start.col]);
 
 		// initialise next square with old square
 		int nextColumn = start.col;
 		int nextRow = start.row;
 
-		// walk along column
-		nextColumn += dc;
-		// check if off board in column
-		if (nextColumn < 0 || nextColumn > 4) {
-			return; // of board, stop search
-		}
+		do {
 
-		// walk along row
-		nextRow += dr;
-		// check if off board in row
-		if (nextRow < 0 || nextRow > 5) {
-			return; // of board, stop search
-		}
-
-		// check if run into piece
-		char nextPiece = squares[nextRow][nextColumn];
-		if (nextPiece != '.') {
-
-			// in what kind of piece have i run?
-			boolean pieceToBeTakenIsWhite = isPieceWhite(squares[nextRow][nextColumn]);
-
-			if ((pieceToBeTakenIsWhite ^ pieceIsWhite)) { // hit enemy piece
-
-				if (capture) { // may capture enemy
-
-					moves.add(new Move(start + "-"
-							+ new Square(nextColumn, nextRow))); // capture
-					return; // stop
-
-				} else { // may not capture enemy
-					return; // stop
-				}
-			} else { // hit own piece
-				return; // stop
+			// walk along column
+			nextColumn += dc;
+			// check if off board in column
+			if (nextColumn < 0 || nextColumn > 4) {
+				return; // off board, stop search
 			}
-		} else { // have not run into other piece
 
-			moves.add(new Move(start + "-" + new Square(nextColumn, nextRow))); // capture
-			// TODO
+			// walk along row
+			nextRow += dr;
+			// check if off board in row
+			if (nextRow < 0 || nextRow > 5) {
+				return; // off board, stop search
+			}
+
+			// check if run into piece
+			char nextPiece = squares[nextRow][nextColumn];
+			if (nextPiece != '.') {
+
+				// in what kind of piece have i run?
+				boolean pieceToBeTakenIsWhite = isPieceWhite(squares[nextRow][nextColumn]);
+
+				if ((pieceToBeTakenIsWhite ^ pieceIsWhite)) { // hit enemy piece
+
+					if (capture) { // may capture enemy
+
+						moves.add(new Move(start, new Square(nextColumn, nextRow))); // capture
+						break; // stop
+
+					}
+					else { // may not capture enemy
+						break; // stop
+					}
+				}
+				else { // hit own piece
+					break; // stop
+				}
+			}
+			else { // have not run into other piece
+
+				if (capture_only) { // may only move if capturing
+					continue; // try next scan step
+				}
+				else { // may move without capturing
+					moves.add(new Move(start, new Square(nextColumn, nextRow))); // not capturing but legal
+				}
+			}
 		}
+		while (!single); // repeat scanning steps until stop condition met or
+							// single step taken
 	}
 
-	public ArrayList<Move> moves() {
+	public ArrayList<Move> moves()
+	{
+
 		return null;
 	}
 
-	private boolean isPieceWhite(char piece) {
+	private boolean isPieceWhite(char piece)
+	{
+
 		return (piece >= 'A' && piece <= 'Z') ? true : false;
 	}
 }
