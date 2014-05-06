@@ -188,8 +188,13 @@ public class Board
 	// print standardized string into writer
 	public void print(Writer writer) throws IOException
 	{
-
 		writer.write(this.toString());
+	}
+	
+	// print human readable string into writer
+	public void humanReadablePrint(Writer writer) throws IOException
+	{
+		writer.write(this.toHumanReadableString());
 	}
 
 	public char checkedMove(Move move)
@@ -280,7 +285,7 @@ public class Board
 			else {
 				returnValue = 'W';
 			}
-			System.out.println("No valid turns for " + this.onMove + " in next turn. " + returnValue + " wins!"); // TODO
+			//System.out.println("No valid turns for " + this.onMove + " in next turn. " + returnValue + " wins!");
 		}
 
 		return returnValue;
