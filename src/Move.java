@@ -1,4 +1,4 @@
-
+public class Move{
 
 	public Square from, to;
 
