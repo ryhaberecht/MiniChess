@@ -267,7 +267,6 @@ public class Board
 		int nextRow = start.row;
 
 		do {
-
 			// walk along column
 			nextColumn += dc;
 			// check if off board in column
