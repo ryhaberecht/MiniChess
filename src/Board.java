@@ -22,7 +22,6 @@ public class Board
 	// test function, no error means it works Ok
 	public static void main(String args[]) throws IOException
 	{
-
 		// Test
 
 		// reader + writer
@@ -52,27 +51,24 @@ public class Board
 		System.out.println();
 	}
 
-	@SuppressWarnings("unchecked")
 	public Board(Board board)
 	{
 		this.squares = board.squares;
 		this.moveNum = board.moveNum;
 		this.onMove = board.onMove;
-		this.legalMovesForNextTurn = (ArrayList<Move>) board.legalMovesForNextTurn.clone();
+		this.legalMovesForNextTurn = deepCopyArrayList(board.legalMovesForNextTurn);
 		this.score = board.score;
 	}
 
 	// create new board from state in "state"
 	public Board(String state)
 	{
-
 		makeBoard(state);
 	}
 
 	// create new board from state in "reader"
 	public Board(Reader reader) throws IOException
 	{
-
 		char[] cbuf = new char[39];
 		reader.read(cbuf);
 		makeBoard(new String(cbuf));
@@ -81,14 +77,12 @@ public class Board
 	// create new board with default state
 	public Board()
 	{
-
 		makeBoard("1 W\nkqbnr\nppppp\n.....\n.....\nPPPPP\nRNBQK");
 	}
 
 	// create board helper function
 	private void makeBoard(String state)
 	{
-
 		// check length of state string
 		if (state.length() != 39 && state.length() != 40) {
 			throw new Error("state does not have 39 or 40 characters but " + state.length() + ". And is: " + state);
@@ -165,7 +159,6 @@ public class Board
 		}
 
 		// calculate all valid moves for next turn
-		this.legalMovesForNextTurn = new ArrayList<Move>();
 		this.legalMovesForNextTurn = getAllLegalMoves(this.onMove);
 
 		// calculate initial board score
@@ -191,7 +184,6 @@ public class Board
 	// print state into human readable string, nicer to the eye than toString()
 	public String toHumanReadableString()
 	{
-
 		String result = "Move Nr.: " + ((this.onMove == 'W') ? ((this.moveNum + 1) / 2) : (this.moveNum / 2)) + "\nFor Player: " + (this.onMove == 'W' ? "White" : "Black") + "\n";
 
 		for (int row = Constants.MAX_ROW; row >= Constants.MIN_ROW; row--) {
@@ -396,8 +388,7 @@ public class Board
 			throw new Error("color is not B or W");
 		}
 
-		this.legalMovesForNextTurn.clear();
-		ArrayList<Move> legalMoves = this.legalMovesForNextTurn;
+		ArrayList<Move> legalMoves = new ArrayList<Move>();
 
 		// scan all squares for a piece of my color
 		char piece;
@@ -535,12 +526,12 @@ public class Board
 
 	public Move getAiMove()
 	{
-		return this.getRandomHeuristicAiMove();
+		return this.getRandomAiMove();
 	}
 
 	// returns points for the current board and for the color who will take the next turn.
 	// positive points show that the color taking the next turn is winning, negative that it is losing.
-	public float calculateHeuristicScore()	//TODO optimize: do not calculate but change for very move
+	public float calculateHeuristicScore() // TODO optimize: do not calculate but change for very move
 	{
 		float counter_white = 0;
 		float counter_black = 0;
@@ -583,5 +574,14 @@ public class Board
 			result = counter_white - counter_black;
 		}
 		return result;
+	}
+
+	public static <T> ArrayList<T> deepCopyArrayList(ArrayList<T> list)
+	{
+		ArrayList<T> clonedList = new ArrayList<T>(list.size());
+		for (T entry : list) {
+			clonedList.add(entry);
+		}
+		return clonedList;
 	}
 }

@@ -200,6 +200,7 @@ public class Driver
 					scanIn.close();
 					throw new Error("game or connection ended before first move of adversary.");
 				}
+				System.out.println(board.printValidMovesForNextTurn());
 				board.move(new Move(adversaryMove));
 			}
 
@@ -208,6 +209,7 @@ public class Driver
 				// make own move
 				ownMove = board.getAiMove();
 				telnetClient.sendMove(ownMove.toString());
+				System.out.println(board.printValidMovesForNextTurn());
 				winCondition = board.move(ownMove);
 				// TODO optimize
 				if (winCondition == '=') { // tie
@@ -228,6 +230,7 @@ public class Driver
 				if (adversaryMove == null) {
 					break;
 				}
+				System.out.println(board.printValidMovesForNextTurn());
 				winCondition = board.move(new Move(adversaryMove));
 				// TODO optimize
 				if (winCondition == '=') { // tie
