@@ -1,6 +1,4 @@
-import java.io.FileWriter;
 import java.io.IOException;
-import java.io.Writer;
 import java.util.Scanner;
 
 public class Driver
@@ -58,53 +56,44 @@ public class Driver
 		}
 		else if ("ai-ai".matches(gameType) || "3".matches(gameType)) { // ai on ai
 
-			Writer writer = new FileWriter("output.txt");
-
-			writer.write(board.toHumanReadableString());
-			writer.write("\n");
-			writer.write("\n");
-			writer.write(board.printValidMovesForNextTurn());
-			writer.write("\n");
-			writer.write("Next move: ");
+			System.out.println(board.toHumanReadableString());
+			System.out.println();
+			//System.out.println(board.printValidMovesForNextTurn());
+			System.out.println("Next move: ");
 
 			do {
 				Move nextMove = board.getAiMove();
-				writer.write(nextMove.toString());
+				System.out.println(nextMove.toString());
 				winCondition = board.move(nextMove);
-				writer.write("\n");
-				writer.write("\n");
-				writer.write("\n");
-				writer.write(board.toHumanReadableString());
-				writer.write("\n");
+				System.out.println();
+				System.out.println();
+				System.out.println(board.toHumanReadableString());
 				if (winCondition == '=') { // tie
-					writer.write("\n");
-					writer.write("Tie! Nobody wins.");
+					System.out.println();
+					System.out.println("Tie! Nobody wins.");
 					break;
 				}
 				else if (winCondition == 'W') { // white wins
-					writer.write("\n");
-					writer.write("White wins!");
+					System.out.println();
+					System.out.println("White wins!");
 					break;
 				}
 				else if (winCondition == 'B') { // black wins
-					writer.write("\n");
-					writer.write("Black wins!");
+					System.out.println("\n");
+					System.out.println("Black wins!");
 					break;
 				}
 				else if (winCondition == '?') { // nobody won yet
-					writer.write("\n");
-					writer.write(board.printValidMovesForNextTurn());
-					writer.write("\n");
-					writer.write("Next move: ");
+					System.out.println();
+					//System.out.println(board.printValidMovesForNextTurn());
+					System.out.println("Next move: ");
 				}
 				else { // invalid win condition
 					scanIn.close();
-					writer.close();
 					throw new Error("Invalid win condition returned by move()");
 				}
 			}
 			while (true);
-			writer.close();
 		}
 		else if ("human-ai".matches(gameType) || "2".matches(gameType)) { // human on ai
 
