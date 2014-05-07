@@ -5,10 +5,12 @@ import java.util.Scanner;
 
 public class Driver
 {
+	private static final boolean cleanOffers = false;
+
 	public static void main(String[] args) throws IOException
 	{
 		// determine type of game
-		System.out.println("Which kind of game? (human-human/human-ai/ai-ai/ai-telnet):");
+		System.out.println("Which kind of game? (human-human(1)/human-ai(2)/ai-ai(3)/ai-telnet(4)):");
 		Scanner scanIn = new Scanner(System.in);
 		String gameType = scanIn.nextLine().trim();
 
@@ -17,7 +19,7 @@ public class Driver
 		String move;
 		char winCondition;
 
-		if ("human-human".matches(gameType)) { // human on human
+		if ("human-human".matches(gameType) || "1".matches(gameType)) { // human on human
 
 			System.out.println(board.toHumanReadableString());
 			System.out.println();
@@ -54,7 +56,7 @@ public class Driver
 			while (scanIn.hasNextLine());
 			scanIn.close();
 		}
-		else if ("ai-ai".matches(gameType)) { // ai on ai
+		else if ("ai-ai".matches(gameType) || "2".matches(gameType)) { // ai on ai
 
 			Writer writer = new FileWriter("output.txt");
 
@@ -104,7 +106,7 @@ public class Driver
 			while (true);
 			writer.close();
 		}
-		else if ("human-ai".matches(gameType)) { // human on ai
+		else if ("human-ai".matches(gameType) || "3".matches(gameType)) { // human on ai
 
 			System.out.println(board.toHumanReadableString());
 			System.out.println();
@@ -113,7 +115,7 @@ public class Driver
 
 			System.out.println("Choose your color: ");
 			String humanColor = scanIn.nextLine();
-			char humanColorChar = humanColor.trim().charAt(0);
+			char humanColorChar = humanColor.trim().toUpperCase().charAt(0);
 			do {
 				// is it human's or ai's turn?
 				if (humanColorChar == board.onMove) { // human is next
@@ -151,24 +153,27 @@ public class Driver
 			while ((board.onMove != humanColorChar) | scanIn.hasNextLine());
 			scanIn.close();
 		}
-		else if ("ai-telnet".matches(gameType)) { // ai on telnet
+		else if ("ai-telnet".matches(gameType) || "4".matches(gameType)) { // ai on telnet
 
 			// create connection to ICMS
 			System.out.println("Trying to connect to ICMS server...");
 			TelnetClient telnetClient = new TelnetClient(Constants.SERVER, Constants.PORT, Constants.USERNAME, Constants.PASSWORD);
 
 			// delete all old offers
-			telnetClient.send("clean", false);
+			if (cleanOffers) {
+				telnetClient.send("clean", true);
+				telnetClient.expect("204", true);
+			}
 
 			// offer or accept game
 			System.out.println("Offer (o) or accept (a) game?");
-			char offerOrAccept = scanIn.nextLine().charAt(0);
+			char offerOrAccept = scanIn.nextLine().toLowerCase().charAt(0);
 			char colorToPlay;
 
 			if (offerOrAccept == 'o') { // offer
 
 				System.out.println("Choose color (W/B/?):");
-				char chosenColor = scanIn.nextLine().charAt(0);
+				char chosenColor = scanIn.nextLine().toUpperCase().charAt(0);
 				colorToPlay = telnetClient.offer(chosenColor);
 			}
 			else if (offerOrAccept == 'a') { // accept
@@ -176,7 +181,7 @@ public class Driver
 				System.out.println("Accept game nr.:");
 				String gameNr = scanIn.nextLine();
 				System.out.println("Choose color (W/B/?):");
-				char chosenColor = scanIn.nextLine().charAt(0);
+				char chosenColor = scanIn.nextLine().toUpperCase().charAt(0);
 				colorToPlay = telnetClient.accept(gameNr, chosenColor);
 			}
 			else { // wrong input
@@ -187,8 +192,8 @@ public class Driver
 
 			// print initial board TODO optimize
 			System.out.println("\n" + board.toHumanReadableString() + "\n");
-			System.out.println(board.printValidMovesForNextTurn()+"\nNext move:");
-			
+			System.out.println(board.printValidMovesForNextTurn() + "\nNext move:");
+
 			// maybe wait for adversary
 			String adversaryMove;
 			Move ownMove;
@@ -200,9 +205,9 @@ public class Driver
 					throw new Error("game or connection ended before first move of adversary.");
 				}
 				winCondition = board.move(new Move(adversaryMove));
-				//TODO optimize
-				System.out.println(adversaryMove+"\n\n" + board.toHumanReadableString() + "\n");
-				System.out.println(board.printValidMovesForNextTurn()+"\nNext move:");
+				// TODO optimize
+				System.out.println(adversaryMove + "\n\n" + board.toHumanReadableString() + "\n");
+				System.out.println(board.printValidMovesForNextTurn() + "\nNext move:");
 				if (winCondition == '=') { // tie
 					System.out.println("Tie! Nobody wins.");
 				}
@@ -220,9 +225,9 @@ public class Driver
 				ownMove = getAiMove(board);
 				telnetClient.sendMove(ownMove.toString());
 				winCondition = board.move(ownMove);
-				//TODO optimize
-				System.out.println(ownMove+"\n\n" + board.toHumanReadableString() + "\n");
-				System.out.println(board.printValidMovesForNextTurn()+"\nNext move:");
+				// TODO optimize
+				System.out.println(ownMove + "\n\n" + board.toHumanReadableString() + "\n");
+				System.out.println(board.printValidMovesForNextTurn() + "\nNext move:");
 				if (winCondition == '=') { // tie
 					System.out.println("Tie! Nobody wins.");
 				}
@@ -239,9 +244,9 @@ public class Driver
 					break;
 				}
 				winCondition = board.move(new Move(adversaryMove));
-				//TODO optimize
-				System.out.println(adversaryMove+"\n\n" + board.toHumanReadableString() + "\n");
-				System.out.println(board.printValidMovesForNextTurn()+"\nNext move:");
+				// TODO optimize
+				System.out.println(adversaryMove + "\n\n" + board.toHumanReadableString() + "\n");
+				System.out.println(board.printValidMovesForNextTurn() + "\nNext move:");
 				if (winCondition == '=') { // tie
 					System.out.println("Tie! Nobody wins.");
 				}
