@@ -190,10 +190,6 @@ public class Driver
 				throw new Error("Action does not exist!");
 			}
 
-			// print initial board TODO optimize
-			System.out.println("\n" + board.toHumanReadableString() + "\n");
-			System.out.println(board.printValidMovesForNextTurn() + "\nNext move:");
-
 			// maybe wait for adversary
 			String adversaryMove;
 			Move ownMove;
@@ -204,19 +200,7 @@ public class Driver
 					scanIn.close();
 					throw new Error("game or connection ended before first move of adversary.");
 				}
-				winCondition = board.move(new Move(adversaryMove));
-				// TODO optimize
-				System.out.println(adversaryMove + "\n\n" + board.toHumanReadableString() + "\n");
-				System.out.println(board.printValidMovesForNextTurn() + "\nNext move:");
-				if (winCondition == '=') { // tie
-					System.out.println("Tie! Nobody wins.");
-				}
-				else if (winCondition == 'W') { // white wins
-					System.out.println("White wins!");
-				}
-				else if (winCondition == 'B') { // black wins
-					System.out.println("Black wins!");
-				}
+				board.move(new Move(adversaryMove));
 			}
 
 			while (true) {
@@ -226,16 +210,17 @@ public class Driver
 				telnetClient.sendMove(ownMove.toString());
 				winCondition = board.move(ownMove);
 				// TODO optimize
-				System.out.println(ownMove + "\n\n" + board.toHumanReadableString() + "\n");
-				System.out.println(board.printValidMovesForNextTurn() + "\nNext move:");
 				if (winCondition == '=') { // tie
 					System.out.println("Tie! Nobody wins.");
+					break;
 				}
 				else if (winCondition == 'W') { // white wins
 					System.out.println("White wins!");
+					break;
 				}
 				else if (winCondition == 'B') { // black wins
 					System.out.println("Black wins!");
+					break;
 				}
 
 				// wait for adversary
@@ -245,16 +230,17 @@ public class Driver
 				}
 				winCondition = board.move(new Move(adversaryMove));
 				// TODO optimize
-				System.out.println(adversaryMove + "\n\n" + board.toHumanReadableString() + "\n");
-				System.out.println(board.printValidMovesForNextTurn() + "\nNext move:");
 				if (winCondition == '=') { // tie
 					System.out.println("Tie! Nobody wins.");
+					break;
 				}
 				else if (winCondition == 'W') { // white wins
 					System.out.println("White wins!");
+					break;
 				}
 				else if (winCondition == 'B') { // black wins
 					System.out.println("Black wins!");
+					break;
 				}
 			}
 			telnetClient.close(); // close ICMS connection
@@ -266,7 +252,15 @@ public class Driver
 		scanIn.close();
 	}
 
+	@SuppressWarnings("unused")
 	private static Move getRandomAiMove(Board board)
+	{
+		int listLength = board.legalMovesForNextTurn.size();
+		int randomIndex = (int) (Math.random() * listLength);
+		return board.legalMovesForNextTurn.get(randomIndex);
+	}
+	
+	private static Move getRandomHeuristicAiMove(Board board)
 	{
 		int listLength = board.legalMovesForNextTurn.size();
 		int randomIndex = (int) (Math.random() * listLength);
@@ -275,6 +269,6 @@ public class Driver
 
 	private static Move getAiMove(Board board)
 	{
-		return getRandomAiMove(board);
+		return getRandomHeuristicAiMove(board);
 	}
 }
