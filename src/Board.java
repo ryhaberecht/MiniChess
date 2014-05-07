@@ -494,4 +494,11 @@ public class Board
 	{
 		return this.getRandomHeuristicAiMove();
 	}
+	
+	// returns points for the current board and for the color who will take the next turn.
+	// positive points show that the color taking the next turn is winning, negative that it is losing.
+	public float calculateHeuristicScore()
+	{
+		
+	}
 }
