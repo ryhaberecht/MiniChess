@@ -475,4 +475,23 @@ public class Board
 
 		return (piece >= 'A' && piece <= 'Z') ? true : false;
 	}
+	
+	public Move getRandomAiMove()
+	{
+		int listLength = this.legalMovesForNextTurn.size();
+		int randomIndex = (int) (Math.random() * listLength);
+		return this.legalMovesForNextTurn.get(randomIndex);
+	}
+	
+	public Move getRandomHeuristicAiMove()
+	{
+		int listLength = this.legalMovesForNextTurn.size();
+		int randomIndex = (int) (Math.random() * listLength);
+		return this.legalMovesForNextTurn.get(randomIndex);
+	}
+
+	public Move getAiMove()
+	{
+		return this.getRandomHeuristicAiMove();
+	}
 }

@@ -68,7 +68,7 @@ public class Driver
 			writer.write("Next move: ");
 
 			do {
-				Move nextMove = getAiMove(board);
+				Move nextMove = board.getAiMove();
 				writer.write(nextMove.toString());
 				winCondition = board.move(nextMove);
 				writer.write("\n");
@@ -123,7 +123,7 @@ public class Driver
 					winCondition = board.checkedMove(new Move(move));
 				}
 				else { // ai is next
-					winCondition = board.move(getAiMove(board));
+					winCondition = board.move(board.getAiMove());
 				}
 
 				System.out.println();
@@ -206,7 +206,7 @@ public class Driver
 			while (true) {
 
 				// make own move
-				ownMove = getAiMove(board);
+				ownMove = board.getAiMove();
 				telnetClient.sendMove(ownMove.toString());
 				winCondition = board.move(ownMove);
 				// TODO optimize
@@ -250,25 +250,5 @@ public class Driver
 			throw new Error("Unknown game type: " + gameType);
 		}
 		scanIn.close();
-	}
-
-	@SuppressWarnings("unused")
-	private static Move getRandomAiMove(Board board)
-	{
-		int listLength = board.legalMovesForNextTurn.size();
-		int randomIndex = (int) (Math.random() * listLength);
-		return board.legalMovesForNextTurn.get(randomIndex);
-	}
-	
-	private static Move getRandomHeuristicAiMove(Board board)
-	{
-		int listLength = board.legalMovesForNextTurn.size();
-		int randomIndex = (int) (Math.random() * listLength);
-		return board.legalMovesForNextTurn.get(randomIndex);
-	}
-
-	private static Move getAiMove(Board board)
-	{
-		return getRandomHeuristicAiMove(board);
 	}
 }
