@@ -166,7 +166,6 @@ public class Board
 		}
 
 		// calculate all valid moves for next turn
-		this.legalMovesForNextTurn = new ArrayList<Move>();
 		this.legalMovesForNextTurn = getAllLegalMoves(this.onMove);
 
 		// calculate initial board score
@@ -510,18 +509,12 @@ public class Board
 		for (Move move : this.legalMovesForNextTurn) {
 			Board boardCopy = new Board(this); // create board copy
 			boardCopy.move(move); // make move on copy
-			boardCopy.score = calculateHeuristicScore(this); // calculate new board score
+			boardCopy.score = -calculateHeuristicScore(this); // calculate new board score
 			boardsForNextLegalMoves.put(move, boardCopy); // add board copy to map
 			if (boardCopy.score < lowestScore) { // save board score if lowest
 				lowestScore = boardCopy.score;
 			}
 		}
-
-		/*
-		 * /TODO for (Object move : boardsForNextLegalMoves.keySet().toArray()) { move = (Move) move; //for (Board board :
-		 * boardsForNextLegalMoves.values()) { System.out.println("DEBUG: For Move: "+move.toString()); //System.out.println("DEBUG: Results in:");
-		 * //System.out.println(board.toHumanReadableString()); System.out.println(); //} } /
-		 */
 
 		// only keep boards with lowest score
 		for (Board board : boardsForNextLegalMoves.values()) {
@@ -580,10 +573,10 @@ public class Board
 			}
 		}
 		if (board.onMove == 'B') {
-			result = counter_black - counter_white;
+			result = counter_white - counter_black;
 		}
 		else {
-			result = counter_white - counter_black;
+			result = counter_black - counter_white;
 		}
 		return result;
 	}
@@ -593,7 +586,7 @@ public class Board
 		// create move-indexed map for board copies
 		IdentityHashMap<Move, Board> boardsForNextLegalMoves = new IdentityHashMap<Move, Board>(this.legalMovesForNextTurn.size());
 
-		float largestScore = Float.MIN_VALUE;
+		float highestScore = Float.MIN_VALUE;
 		char winCondition;
 
 		// for every legal move
@@ -605,16 +598,21 @@ public class Board
 			if (winCondition == '=') { // tie
 				boardCopy.score = 0;
 			}
-			else if ((winCondition == 'B' || winCondition == 'W') && (winCondition != boardCopy.onMove)) { // win for side on move last
-				boardCopy.score = 10000;
+			else if (winCondition == 'B' || winCondition == 'W') { // some side wins
+				if (winCondition == boardCopy.onMove) { // opponent wins
+					//boardCopy.score = -10000;
+				}
+				else { // I win
+					boardCopy.score = 10000;
+				}
 			}
 			else {
-				boardCopy.score = - getNegamaxScore(boardCopy, Constants.NEGAMAX_RECURSION_DEPTH); // calculate new board score
+				boardCopy.score = getNegamaxScore(boardCopy, Constants.NEGAMAX_RECURSION_DEPTH); // calculate new board score
 			}
 
 			// save board score if highest
-			if (boardCopy.score > largestScore) {
-				largestScore = boardCopy.score;
+			if (boardCopy.score > highestScore) {
+				highestScore = boardCopy.score;
 			}
 
 			boardsForNextLegalMoves.put(move, boardCopy); // add board copy to map
@@ -622,7 +620,7 @@ public class Board
 
 		// only keep boards with largest score
 		for (Board board : boardsForNextLegalMoves.values()) {
-			if (board.score < largestScore) {
+			if (-board.score < highestScore) {
 				boardsForNextLegalMoves.remove(board);
 			}
 		}
@@ -639,9 +637,10 @@ public class Board
 		}
 	}
 
+	// search for the highest score
 	public float getNegamaxScore(Board board, int recursionDepth)
 	{
-		float largestScore = Float.MIN_VALUE;
+		float highestScore = Float.MIN_VALUE;
 		char winCondition;
 
 		// if recursion reached 0, return score
@@ -658,19 +657,24 @@ public class Board
 			if (winCondition == '=') { // tie
 				boardCopy.score = 0;
 			}
-			else if ((winCondition == 'B' || winCondition == 'W') && (winCondition != boardCopy.onMove)) { // win for side on move last
-				boardCopy.score = 10000;
+			else if (winCondition == 'B' || winCondition == 'W') { // some side wins
+				if (winCondition == boardCopy.onMove) { // opponent wins
+					//boardCopy.score = -10000;
+				}
+				else { // I win
+					boardCopy.score = 10000;
+				}
 			}
 			else {
-				boardCopy.score = - getNegamaxScore(boardCopy, (recursionDepth - 1)); // calculate new board score
+				boardCopy.score = getNegamaxScore(boardCopy, (recursionDepth - 1)); // calculate new board score
 			}
 
 			// save board score if highest
-			if (boardCopy.score > largestScore) {
-				largestScore = boardCopy.score;
+			if (-boardCopy.score > highestScore) {
+				highestScore = -boardCopy.score;
 			}
 		}
 
-		return largestScore;
+		return highestScore;
 	}
 }
