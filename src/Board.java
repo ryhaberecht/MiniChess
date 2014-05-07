@@ -15,9 +15,9 @@ public class Board
 
 	char onMove; // Has B or W the next move?
 
-	ArrayList<Move> legalMovesForNextTurn;	// list of legal moves for next turn
-	
-	float score;	// the score for the color to move next
+	ArrayList<Move> legalMovesForNextTurn; // list of legal moves for next turn
+
+	float score; // the score for the color to move next
 
 	// test function, no error means it works Ok
 	public static void main(String args[]) throws IOException
@@ -51,7 +51,7 @@ public class Board
 		System.out.println(board.toString());
 		System.out.println();
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	public Board(Board board)
 	{
@@ -116,9 +116,9 @@ public class Board
 		if (this.onMove != 'B' && this.onMove != 'W') {
 			throw new Error("onMove is not B or W");
 		}
-		
+
 		// correct this.moveNum because it is 40 moves each
-		this.moveNum = ((this.onMove == 'W') ? ((this.moveNum*2)-1) : (this.moveNum*2));
+		this.moveNum = ((this.onMove == 'W') ? ((this.moveNum * 2) - 1) : (this.moveNum * 2));
 
 		// check if characters are a valid piece or empty and save
 		char currentChar;
@@ -167,7 +167,7 @@ public class Board
 		// calculate all valid moves for next turn
 		this.legalMovesForNextTurn = new ArrayList<Move>();
 		this.legalMovesForNextTurn = getAllLegalMoves(this.onMove);
-		
+
 		// calculate initial board score
 		this.score = calculateHeuristicScore();
 	}
@@ -176,7 +176,7 @@ public class Board
 	@Override
 	public String toString()
 	{
-		String result = ((this.onMove == 'W') ? ((this.moveNum+1)/2) : (this.moveNum/2)) + " " + this.onMove;
+		String result = ((this.onMove == 'W') ? ((this.moveNum + 1) / 2) : (this.moveNum / 2)) + " " + this.onMove;
 
 		for (int row = Constants.MAX_ROW; row >= Constants.MIN_ROW; row--) {
 			result += "\n";
@@ -192,7 +192,7 @@ public class Board
 	public String toHumanReadableString()
 	{
 
-		String result = "Move Nr.: " + ((this.onMove == 'W') ? ((this.moveNum+1)/2) : (this.moveNum/2)) + "\nFor Player: " + (this.onMove == 'W' ? "White" : "Black") + "\n";
+		String result = "Move Nr.: " + ((this.onMove == 'W') ? ((this.moveNum + 1) / 2) : (this.moveNum / 2)) + "\nFor Player: " + (this.onMove == 'W' ? "White" : "Black") + "\n";
 
 		for (int row = Constants.MAX_ROW; row >= Constants.MIN_ROW; row--) {
 			result += "\n" + (row + 1) + "|";
@@ -209,7 +209,7 @@ public class Board
 	{
 		writer.write(this.toString());
 	}
-	
+
 	// print human readable string into writer
 	public void humanReadablePrint(Writer writer) throws IOException
 	{
@@ -304,12 +304,12 @@ public class Board
 			else {
 				returnValue = 'W';
 			}
-			//System.out.println("No valid turns for " + this.onMove + " in next turn. " + returnValue + " wins!");
+			// System.out.println("No valid turns for " + this.onMove + " in next turn. " + returnValue + " wins!");
 		}
 
 		// calculate new board score
 		this.score = calculateHeuristicScore();
-		
+
 		return returnValue;
 	}
 
@@ -496,37 +496,37 @@ public class Board
 
 		return (piece >= 'A' && piece <= 'Z') ? true : false;
 	}
-	
+
 	public Move getRandomAiMove()
 	{
 		int listLength = this.legalMovesForNextTurn.size();
 		int randomIndex = (int) (Math.random() * listLength);
 		return this.legalMovesForNextTurn.get(randomIndex);
 	}
-	
+
 	public Move getRandomHeuristicAiMove()
 	{
 		// create move-indexed map for board copies
 		IdentityHashMap<Move, Board> boardsForNextLegalMoves = new IdentityHashMap<Move, Board>(this.legalMovesForNextTurn.size());
 		float lowestScore = Float.MAX_VALUE;
-		
+
 		// for every legal move
 		for (Move move : this.legalMovesForNextTurn) {
-			Board boardCopy = new Board(this);	// create board copy
-			boardsForNextLegalMoves.put(move, boardCopy);	// add board copy to map
-			boardCopy.move(move);	// make move on copy
-			if (boardCopy.score < lowestScore) {	// save board score if lowest
+			Board boardCopy = new Board(this); // create board copy
+			boardsForNextLegalMoves.put(move, boardCopy); // add board copy to map
+			boardCopy.move(move); // make move on copy
+			if (boardCopy.score < lowestScore) { // save board score if lowest
 				lowestScore = boardCopy.score;
 			}
 		}
-		
+
 		// only keep boards with lowest score
 		for (Board board : boardsForNextLegalMoves.values()) {
 			if (board.score > lowestScore) {
 				boardsForNextLegalMoves.remove(board);
 			}
 		}
-		
+
 		// return random one of the moves left
 		int listLength = boardsForNextLegalMoves.size();
 		int randomIndex = (int) (Math.random() * listLength);
@@ -537,11 +537,51 @@ public class Board
 	{
 		return this.getRandomHeuristicAiMove();
 	}
-	
+
 	// returns points for the current board and for the color who will take the next turn.
 	// positive points show that the color taking the next turn is winning, negative that it is losing.
-	private float calculateHeuristicScore()
+	public float calculateHeuristicScore()
 	{
-		return 0.0f;
+		float counter_white = 0;
+		float counter_black = 0;
+		float result = 0;
+		for (int i = 0; i <= Constants.MAX_ROW; i++) {
+			for (int j = 0; j <= Constants.MAX_COLUMN; j++) {
+				char position = squares[i][j];
+				switch (position) {
+				case 'K':
+					counter_white += 1000;
+				case 'Q':
+					counter_white += 9;
+				case 'R':
+					counter_white += 5;
+				case 'N':
+					counter_white += 3;
+				case 'B':
+					counter_white += 3;
+				case 'P':
+					counter_white += 1;
+				case 'k':
+					counter_black += 1000;
+				case 'q':
+					counter_black += 9;
+				case 'r':
+					counter_black += 5;
+				case 'n':
+					counter_black += 3;
+				case 'b':
+					counter_black += 3;
+				case 'p':
+					counter_black += 1;
+				}
+			}
+		}
+		if (this.onMove == 'B') {
+			result = counter_black - counter_white;
+		}
+		else {
+			result = counter_white - counter_black;
+		}
+		return result;
 	}
 }
