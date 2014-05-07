@@ -9,7 +9,7 @@ import java.util.IdentityHashMap;
 public class Board
 {
 
-	char[][] squares = new char[6][5]; // number / letter -> row / column
+	char[][] squares = new char[Constants.MAX_ROW+1][Constants.MAX_COLUMN+1]; // number / letter -> row / column
 
 	int moveNum; // number of next move taking place. 1 to 40 (40 = draw)
 
@@ -53,10 +53,17 @@ public class Board
 
 	public Board(Board board)
 	{
-		this.squares = board.squares;
+		// copy squares
+		this.squares = new char[Constants.MAX_ROW+1][Constants.MAX_COLUMN+1];
+		for (int row = Constants.MAX_ROW; row >= Constants.MIN_ROW; row--) {
+			for (int col = Constants.MIN_COLUMN; col <= Constants.MAX_COLUMN; col++) {
+				this.squares[row][col] = board.squares[row][col];
+			}
+		}
+		// copy rest
 		this.moveNum = board.moveNum;
 		this.onMove = board.onMove;
-		this.legalMovesForNextTurn = deepCopyArrayList(board.legalMovesForNextTurn);
+		//this.legalMovesForNextTurn = deepCopyArrayList(board.legalMovesForNextTurn);
 		this.score = board.score;
 	}
 
@@ -159,6 +166,7 @@ public class Board
 		}
 
 		// calculate all valid moves for next turn
+		this.legalMovesForNextTurn = new ArrayList<Move>();
 		this.legalMovesForNextTurn = getAllLegalMoves(this.onMove);
 
 		// calculate initial board score
@@ -388,7 +396,8 @@ public class Board
 			throw new Error("color is not B or W");
 		}
 
-		ArrayList<Move> legalMoves = new ArrayList<Move>();
+		
+		ArrayList<Move> list = new ArrayList<Move>();
 
 		// scan all squares for a piece of my color
 		char piece;
@@ -396,20 +405,20 @@ public class Board
 
 			for (int column = Constants.MIN_COLUMN; column <= Constants.MAX_COLUMN; column++) {
 
-				piece = squares[row][column]; // potential piece
+				piece = this.squares[row][column]; // potential piece
 				// there is a piece
 				if (piece != '.') {
 
 					// piece is of my color
 					if ((isPieceWhite(piece) && color == 'W') || (!isPieceWhite(piece) && color == 'B')) {
 
-						getLegalMoves(piece, new Square(column, row), legalMoves);
+						getLegalMoves(piece, new Square(column, row), list);
 					}
 				}
 			}
 		}
-
-		return legalMoves;
+		
+		return list;
 	}
 
 	// appends legal moves of a piece at coordinate to allMoves
@@ -511,6 +520,18 @@ public class Board
 			}
 		}
 
+		/*/TODO
+		for (Object move : boardsForNextLegalMoves.keySet().toArray()) {
+			move = (Move) move;
+			//for (Board board : boardsForNextLegalMoves.values()) {
+				System.out.println("DEBUG: For Move: "+move.toString());
+				//System.out.println("DEBUG: Results in:");
+				//System.out.println(board.toHumanReadableString());
+				System.out.println();
+			//}
+		}
+		/*/
+		
 		// only keep boards with lowest score
 		for (Board board : boardsForNextLegalMoves.values()) {
 			if (board.score > lowestScore) {
@@ -526,7 +547,7 @@ public class Board
 
 	public Move getAiMove()
 	{
-		return this.getRandomAiMove();
+		return this.getRandomHeuristicAiMove();
 	}
 
 	// returns points for the current board and for the color who will take the next turn.
@@ -538,7 +559,7 @@ public class Board
 		float result = 0;
 		for (int i = 0; i <= Constants.MAX_ROW; i++) {
 			for (int j = 0; j <= Constants.MAX_COLUMN; j++) {
-				char position = squares[i][j];
+				char position = this.squares[i][j];
 				switch (position) {
 				case 'K':
 					counter_white += 1000;

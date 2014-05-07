@@ -56,7 +56,7 @@ public class Driver
 			while (scanIn.hasNextLine());
 			scanIn.close();
 		}
-		else if ("ai-ai".matches(gameType) || "2".matches(gameType)) { // ai on ai
+		else if ("ai-ai".matches(gameType) || "3".matches(gameType)) { // ai on ai
 
 			Writer writer = new FileWriter("output.txt");
 
@@ -106,7 +106,7 @@ public class Driver
 			while (true);
 			writer.close();
 		}
-		else if ("human-ai".matches(gameType) || "3".matches(gameType)) { // human on ai
+		else if ("human-ai".matches(gameType) || "2".matches(gameType)) { // human on ai
 
 			System.out.println(board.toHumanReadableString());
 			System.out.println();
@@ -200,7 +200,7 @@ public class Driver
 					scanIn.close();
 					throw new Error("game or connection ended before first move of adversary.");
 				}
-				System.out.println(board.printValidMovesForNextTurn());
+				//System.out.println(board.printValidMovesForNextTurn());
 				board.move(new Move(adversaryMove));
 			}
 
@@ -209,7 +209,7 @@ public class Driver
 				// make own move
 				ownMove = board.getAiMove();
 				telnetClient.sendMove(ownMove.toString());
-				System.out.println(board.printValidMovesForNextTurn());
+				//System.out.println(board.printValidMovesForNextTurn());
 				winCondition = board.move(ownMove);
 				// TODO optimize
 				if (winCondition == '=') { // tie
@@ -230,7 +230,7 @@ public class Driver
 				if (adversaryMove == null) {
 					break;
 				}
-				System.out.println(board.printValidMovesForNextTurn());
+				//System.out.println(board.printValidMovesForNextTurn());
 				winCondition = board.move(new Move(adversaryMove));
 				// TODO optimize
 				if (winCondition == '=') { // tie

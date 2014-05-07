@@ -1,7 +1,589 @@
-1 B
-kqbnr
-ppppp
-.....
-N....
-PPPPP
-R.BQK
+Move Nr.: 1
+For Player: White
+
+6|kqbnr
+5|ppppp
+4|.....
+3|.....
+2|PPPPP
+1|RNBQK
+  -----
+  abcde
+
+Valid moves: b1-c3, b1-a3, a2-a3, b2-b3, c2-c3, d2-d3, e2-e3, 
+Next move: c2-c3
+
+
+Move Nr.: 1
+For Player: Black
+
+6|kqbnr
+5|ppppp
+4|.....
+3|..P..
+2|PP.PP
+1|RNBQK
+  -----
+  abcde
+
+Valid moves: a5-a4, b5-b4, c5-c4, d5-d4, e5-e4, d6-e4, d6-c4, 
+Next move: e5-e4
+
+
+Move Nr.: 2
+For Player: White
+
+6|kqbnr
+5|pppp.
+4|....p
+3|..P..
+2|PP.PP
+1|RNBQK
+  -----
+  abcde
+
+Valid moves: b1-a3, c1-c2, d1-c2, d1-b3, d1-a4, a2-a3, b2-b3, d2-d3, e2-e3, c3-c4, 
+Next move: c3-c4
+
+
+Move Nr.: 2
+For Player: Black
+
+6|kqbnr
+5|pppp.
+4|..P.p
+3|.....
+2|PP.PP
+1|RNBQK
+  -----
+  abcde
+
+Valid moves: e4-e3, a5-a4, b5-b4, b5-c4, d5-d4, d5-c4, d6-c4, e6-e5, 
+Next move: e6-e5
+
+
+Move Nr.: 3
+For Player: White
+
+6|kqbn.
+5|ppppr
+4|..P.p
+3|.....
+2|PP.PP
+1|RNBQK
+  -----
+  abcde
+
+Valid moves: b1-c3, b1-a3, c1-c2, d1-c2, d1-b3, d1-a4, a2-a3, b2-b3, d2-d3, e2-e3, c4-d5, c4-b5, 
+Next move: b1-a3
+
+
+Move Nr.: 3
+For Player: Black
+
+6|kqbn.
+5|ppppr
+4|..P.p
+3|N....
+2|PP.PP
+1|R.BQK
+  -----
+  abcde
+
+Valid moves: e4-e3, a5-a4, b5-b4, b5-c4, d5-d4, d5-c4, e5-e6, d6-c4, 
+Next move: e5-e6
+
+
+Move Nr.: 4
+For Player: White
+
+6|kqbnr
+5|pppp.
+4|..P.p
+3|N....
+2|PP.PP
+1|R.BQK
+  -----
+  abcde
+
+Valid moves: a1-b1, c1-c2, c1-b1, d1-c2, d1-b3, d1-a4, b2-b3, d2-d3, e2-e3, a3-c2, a3-b5, a3-b1, c4-d5, c4-b5, 
+Next move: a3-c2
+
+
+Move Nr.: 4
+For Player: Black
+
+6|kqbnr
+5|pppp.
+4|..P.p
+3|.....
+2|PPNPP
+1|R.BQK
+  -----
+  abcde
+
+Valid moves: e4-e3, a5-a4, b5-b4, b5-c4, d5-d4, d5-c4, d6-c4, e6-e5, 
+Next move: a5-a4
+
+
+Move Nr.: 5
+For Player: White
+
+6|kqbnr
+5|.ppp.
+4|p.P.p
+3|.....
+2|PPNPP
+1|R.BQK
+  -----
+  abcde
+
+Valid moves: a1-b1, c1-b1, a2-a3, b2-b3, c2-e3, c2-a3, c2-d4, c2-b4, d2-d3, e2-e3, c4-d5, c4-b5, 
+Next move: c4-d5
+
+
+Move Nr.: 5
+For Player: Black
+
+6|kqbnr
+5|.ppP.
+4|p...p
+3|.....
+2|PPNPP
+1|R.BQK
+  -----
+  abcde
+
+Valid moves: a4-a3, e4-e3, b5-b4, c5-c4, a6-a5, b6-a5, c6-d5, d6-c4, e6-e5, 
+Next move: a4-a3
+
+
+Move Nr.: 6
+For Player: White
+
+6|kqbnr
+5|.ppP.
+4|....p
+3|p....
+2|PPNPP
+1|R.BQK
+  -----
+  abcde
+
+Valid moves: a1-b1, c1-b1, b2-b3, b2-a3, c2-e3, c2-a3, c2-d4, c2-b4, d2-d3, e2-e3, d5-e6, d5-c6, 
+Next move: b2-a3
+
+
+Move Nr.: 6
+For Player: Black
+
+6|kqbnr
+5|.ppP.
+4|....p
+3|P....
+2|P.NPP
+1|R.BQK
+  -----
+  abcde
+
+Valid moves: e4-e3, b5-b4, c5-c4, a6-a5, b6-a5, c6-d5, d6-c4, e6-e5, 
+Next move: c6-d5
+
+
+Move Nr.: 7
+For Player: White
+
+6|kq.nr
+5|.ppb.
+4|....p
+3|P....
+2|P.NPP
+1|R.BQK
+  -----
+  abcde
+
+Valid moves: a1-b1, c1-b2, c1-b1, c2-e3, c2-d4, c2-b4, d2-d3, e2-e3, a3-a4, 
+Next move: c2-d4
+
+
+Move Nr.: 7
+For Player: Black
+
+6|kq.nr
+5|.ppb.
+4|...Np
+3|P....
+2|P..PP
+1|R.BQK
+  -----
+  abcde
+
+Valid moves: e4-e3, b5-b4, c5-c4, c5-d4, d5-c4, d5-b3, d5-a2, d5-c6, d5-e5, a6-a5, b6-c6, b6-a5, d6-c4, e6-e5, 
+Next move: b6-a5
+
+
+Move Nr.: 8
+For Player: White
+
+6|k..nr
+5|qppb.
+4|...Np
+3|P....
+2|P..PP
+1|R.BQK
+  -----
+  abcde
+
+Valid moves: a1-b1, c1-b2, c1-c2, c1-b1, d1-c2, d1-b3, d1-a4, d2-d3, e2-e3, a3-a4, d4-b5, d4-b3, d4-e6, d4-c6, d4-c2, 
+Next move: a1-b1
+
+
+Move Nr.: 8
+For Player: Black
+
+6|k..nr
+5|qppb.
+4|...Np
+3|P....
+2|P..PP
+1|.RBQK
+  -----
+  abcde
+
+Valid moves: e4-e3, a5-a4, a5-a3, a5-b6, a5-b4, a5-c3, a5-d2, b5-b4, c5-c4, c5-d4, d5-c4, d5-b3, d5-a2, d5-c6, d5-e5, a6-b6, d6-c4, e6-e5, 
+Next move: b5-b4
+
+
+Move Nr.: 9
+For Player: White
+
+6|k..nr
+5|q.pb.
+4|.p.Np
+3|P....
+2|P..PP
+1|.RBQK
+  -----
+  abcde
+
+Valid moves: b1-a1, b1-b2, b1-b3, b1-b4, c1-b2, c1-c2, d1-c2, d1-b3, d1-a4, d2-d3, e2-e3, a3-a4, a3-b4, d4-b5, d4-b3, d4-e6, d4-c6, d4-c2, 
+Next move: d4-c6
+
+
+Move Nr.: 9
+For Player: Black
+
+6|k.Nnr
+5|q.pb.
+4|.p..p
+3|P....
+2|P..PP
+1|.RBQK
+  -----
+  abcde
+
+Valid moves: b4-b3, b4-a3, e4-e3, a5-b5, a5-a4, a5-a3, a5-b6, c5-c4, d5-c4, d5-b3, d5-a2, d5-c6, d5-d4, d5-e5, a6-b6, a6-b5, d6-b5, d6-c4, e6-e5, 
+Next move: d5-d4
+
+
+Move Nr.: 10
+For Player: White
+
+6|k.Nnr
+5|q.p..
+4|.p.bp
+3|P....
+2|P..PP
+1|.RBQK
+  -----
+  abcde
+
+Valid moves: b1-a1, b1-b2, b1-b3, b1-b4, c1-b2, c1-c2, d1-c2, d1-b3, d1-a4, d2-d3, e2-e3, a3-a4, a3-b4, c6-e5, c6-a5, c6-d4, c6-b4, 
+Next move: c6-a5
+
+
+Move Nr.: 10
+For Player: Black
+
+6|k..nr
+5|N.p..
+4|.p.bp
+3|P....
+2|P..PP
+1|.RBQK
+  -----
+  abcde
+
+Valid moves: b4-b3, b4-a3, d4-c3, d4-b2, d4-a1, d4-e3, d4-e5, d4-d5, d4-d3, d4-c4, e4-e3, c5-c4, a6-b6, a6-a5, a6-b5, d6-b5, d6-c4, e6-e5, 
+Next move: d4-c3
+
+
+Move Nr.: 11
+For Player: White
+
+6|k..nr
+5|N.p..
+4|.p..p
+3|P.b..
+2|P..PP
+1|.RBQK
+  -----
+  abcde
+
+Valid moves: b1-a1, b1-b2, b1-b3, b1-b4, c1-b2, c1-c2, d1-c2, d1-b3, d1-a4, d2-d3, d2-c3, e2-e3, a3-a4, a3-b4, a5-c6, a5-c4, a5-b3, 
+Next move: a5-b3
+
+
+Move Nr.: 11
+For Player: Black
+
+6|k..nr
+5|..p..
+4|.p..p
+3|PNb..
+2|P..PP
+1|.RBQK
+  -----
+  abcde
+
+Valid moves: c3-b2, c3-a1, c3-d2, c3-d4, c3-e5, c3-c4, c3-c2, c3-d3, b4-a3, e4-e3, c5-c4, a6-b6, a6-a5, a6-b5, d6-b5, d6-c4, e6-e5, 
+Next move: a6-a5
+
+
+Move Nr.: 12
+For Player: White
+
+6|...nr
+5|k.p..
+4|.p..p
+3|PNb..
+2|P..PP
+1|.RBQK
+  -----
+  abcde
+
+Valid moves: b1-a1, b1-b2, c1-b2, c1-c2, d1-c2, d2-d3, d2-c3, e2-e3, a3-a4, a3-b4, b3-d4, b3-c5, b3-a5, b3-a1, 
+Next move: c1-c2
+
+
+Move Nr.: 12
+For Player: Black
+
+6|...nr
+5|k.p..
+4|.p..p
+3|PNb..
+2|P.BPP
+1|.R.QK
+  -----
+  abcde
+
+Valid moves: c3-b2, c3-a1, c3-d2, c3-d4, c3-e5, c3-c4, c3-d3, b4-a3, e4-e3, a5-b5, a5-a6, a5-a4, a5-b6, c5-c4, d6-b5, d6-c4, e6-e5, 
+Next move: c3-d2
+
+
+Move Nr.: 13
+For Player: White
+
+6|...nr
+5|k.p..
+4|.p..p
+3|PN...
+2|P.BbP
+1|.R.QK
+  -----
+  abcde
+
+Valid moves: b1-c1, b1-a1, b1-b2, d1-c1, d1-d2, e1-d2, c2-d3, c2-e4, c2-c3, c2-c1, c2-b2, e2-e3, a3-a4, a3-b4, b3-d4, b3-d2, b3-c5, b3-a5, b3-c1, b3-a1, 
+Next move: b3-c5
+
+
+Move Nr.: 13
+For Player: Black
+
+6|...nr
+5|k.N..
+4|.p..p
+3|P....
+2|P.BbP
+1|.R.QK
+  -----
+  abcde
+
+Valid moves: d2-c1, d2-e1, d2-c3, d2-e3, d2-d3, b4-b3, b4-a3, e4-e3, a5-b5, a5-a6, a5-a4, a5-b6, d6-b5, d6-c4, e6-e5, 
+Next move: a5-b5
+
+
+Move Nr.: 14
+For Player: White
+
+6|...nr
+5|.kN..
+4|.p..p
+3|P....
+2|P.BbP
+1|.R.QK
+  -----
+  abcde
+
+Valid moves: b1-c1, b1-a1, b1-b2, b1-b3, b1-b4, d1-c1, d1-d2, e1-d2, c2-b3, c2-a4, c2-d3, c2-e4, c2-c3, c2-c1, c2-b2, e2-e3, a3-a4, a3-b4, c5-e6, c5-a6, c5-e4, c5-a4, c5-d3, c5-b3, 
+Next move: b1-c1
+
+
+Move Nr.: 14
+For Player: Black
+
+6|...nr
+5|.kN..
+4|.p..p
+3|P....
+2|P.BbP
+1|..RQK
+  -----
+  abcde
+
+Valid moves: d2-c1, d2-e1, d2-c3, d2-e3, d2-d3, b4-b3, b4-a3, e4-e3, b5-c5, b5-a5, b5-b6, b5-c6, b5-a6, b5-c4, b5-a4, d6-c4, e6-e5, 
+Next move: d6-c4
+
+
+Move Nr.: 15
+For Player: White
+
+6|....r
+5|.kN..
+4|.pn.p
+3|P....
+2|P.BbP
+1|..RQK
+  -----
+  abcde
+
+Valid moves: c1-b1, c1-a1, d1-d2, e1-d2, c2-b1, c2-b3, c2-a4, c2-d3, c2-e4, c2-c3, c2-b2, e2-e3, a3-a4, a3-b4, c5-e6, c5-a6, c5-e4, c5-a4, c5-d3, c5-b3, 
+Next move: c5-b3
+
+
+Move Nr.: 15
+For Player: Black
+
+6|....r
+5|.k...
+4|.pn.p
+3|PN...
+2|P.BbP
+1|..RQK
+  -----
+  abcde
+
+Valid moves: d2-c1, d2-e1, d2-c3, d2-e3, d2-d3, b4-a3, c4-e5, c4-a5, c4-e3, c4-a3, c4-d6, c4-b6, c4-b2, e4-e3, b5-c5, b5-a5, b5-b6, b5-c6, b5-a6, b5-a4, e6-d6, e6-c6, e6-b6, e6-a6, e6-e5, 
+Next move: b5-a6
+
+
+Move Nr.: 16
+For Player: White
+
+6|k...r
+5|.....
+4|.pn.p
+3|PN...
+2|P.BbP
+1|..RQK
+  -----
+  abcde
+
+Valid moves: c1-b1, c1-a1, d1-d2, e1-d2, c2-b1, c2-d3, c2-e4, c2-c3, c2-b2, e2-e3, a3-a4, a3-b4, b3-d4, b3-d2, b3-c5, b3-a5, b3-a1, 
+Next move: c2-d3
+
+
+Move Nr.: 16
+For Player: Black
+
+6|k...r
+5|.....
+4|.pn.p
+3|PN.B.
+2|P..bP
+1|..RQK
+  -----
+  abcde
+
+Valid moves: d2-c1, d2-e1, d2-c3, d2-e3, d2-c2, b4-a3, c4-e5, c4-a5, c4-e3, c4-a3, c4-d6, c4-b6, c4-b2, e4-e3, e4-d3, a6-b6, a6-a5, a6-b5, e6-d6, e6-c6, e6-b6, e6-e5, 
+Next move: e4-d3
+
+
+Move Nr.: 17
+For Player: White
+
+6|k...r
+5|.....
+4|.pn..
+3|PN.p.
+2|P..bP
+1|..RQK
+  -----
+  abcde
+
+Valid moves: c1-b1, c1-a1, c1-c2, c1-c3, c1-c4, d1-d2, d1-c2, e1-d2, e2-e3, e2-d3, a3-a4, a3-b4, b3-d4, b3-d2, b3-c5, b3-a5, b3-a1, 
+Next move: b3-a5
+
+
+Move Nr.: 17
+For Player: Black
+
+6|k...r
+5|N....
+4|.pn..
+3|P..p.
+2|P..bP
+1|..RQK
+  -----
+  abcde
+
+Valid moves: d2-c1, d2-e1, d2-c3, d2-e3, d2-c2, d3-e2, b4-b3, b4-a3, c4-e5, c4-a5, c4-e3, c4-a3, c4-d6, c4-b6, c4-b2, a6-b6, a6-a5, a6-b5, e6-d6, e6-c6, e6-b6, e6-e5, e6-e4, e6-e3, e6-e2, 
+Next move: c4-e5
+
+
+Move Nr.: 18
+For Player: White
+
+6|k...r
+5|N...n
+4|.p...
+3|P..p.
+2|P..bP
+1|..RQK
+  -----
+  abcde
+
+Valid moves: c1-b1, c1-a1, c1-c2, c1-c3, c1-c4, c1-c5, c1-c6, d1-d2, d1-c2, d1-b3, d1-a4, e1-d2, e2-e3, e2-d3, a3-a4, a3-b4, a5-c6, a5-c4, a5-b3, 
+Next move: a5-c6
+
+
+Move Nr.: 18
+For Player: Black
+
+6|k.N.r
+5|....n
+4|.p...
+3|P..p.
+2|P..bP
+1|..RQK
+  -----
+  abcde
+
+Valid moves: d2-c1, d2-e1, d2-c3, d2-e3, d2-c2, d3-e2, b4-b3, b4-a3, e5-c6, e5-c4, a6-b6, a6-a5, a6-b5, e6-d6, e6-c6, 
+Next move: d2-e1
+
+
+Move Nr.: 19
+For Player: White
+
+6|k.N.r
+5|....n
+4|.p...
+3|P..p.
+2|P...P
+1|..RQb
+  -----
+  abcde
+
+Black wins!
