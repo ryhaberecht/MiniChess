@@ -265,10 +265,10 @@ public class Board
 		}
 
 		// turn pawn into queen at the respective end of the board
-		if (piece == 'P' && move.to.row == Constants.MAX_ROW) { // white pawen reached upper end of board
+		if (piece == 'P' && move.to.row == Constants.MAX_ROW) { // white pawn reached upper end of board
 			piece = 'Q'; // turn pawn into queen
 		}
-		else if (piece == 'p' && move.to.row == Constants.MIN_ROW) { // black pawen reached lower end of board
+		else if (piece == 'p' && move.to.row == Constants.MIN_ROW) { // black pawn reached lower end of board
 			piece = 'q'; // turn pawn into queen
 		}
 
@@ -513,8 +513,8 @@ public class Board
 		// for every legal move
 		for (Move move : this.legalMovesForNextTurn) {
 			Board boardCopy = new Board(this); // create board copy
-			boardsForNextLegalMoves.put(move, boardCopy); // add board copy to map
 			boardCopy.move(move); // make move on copy
+			boardsForNextLegalMoves.put(move, boardCopy); // add board copy to map
 			if (boardCopy.score < lowestScore) { // save board score if lowest
 				lowestScore = boardCopy.score;
 			}
@@ -540,7 +540,7 @@ public class Board
 
 	// returns points for the current board and for the color who will take the next turn.
 	// positive points show that the color taking the next turn is winning, negative that it is losing.
-	public float calculateHeuristicScore()
+	public float calculateHeuristicScore()	//TODO optimize: do not calculate but change for very move
 	{
 		float counter_white = 0;
 		float counter_black = 0;
