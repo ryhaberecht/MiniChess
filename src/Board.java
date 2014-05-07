@@ -497,8 +497,47 @@ public class Board
 	
 	// returns points for the current board and for the color who will take the next turn.
 	// positive points show that the color taking the next turn is winning, negative that it is losing.
-	public float calculateHeuristicScore()
-	{
-		
+	public float calculateHeuristicScore(){
+		int counter_white = 0;
+		int counter_black = 0;
+		float result = 0;
+		for(int i = 0; i <= Constants.MAX_ROW; i++){
+			for(int j = 0; j <= Constants.MAX_COLUMN; j++){
+				char position = squares[i][j]; 
+				switch(position){
+					case 'K':
+						counter_white += 1000;
+					case 'Q':
+						counter_white += 9;
+					case 'R':
+						counter_white += 5;
+					case 'N':
+						counter_white += 3;
+					case 'B':
+						counter_white += 3;
+					case 'P':
+						counter_white += 1;
+					case 'k':
+						counter_black += 1000;
+					case 'q':
+						counter_black += 9;
+					case 'r':
+						counter_black += 5;
+					case 'n':
+						counter_black += 3;
+					case 'b':
+						counter_black += 3;
+					case 'p':
+						counter_black += 1;
+				}
+			}
+		}
+		if(onMove == 'B'){
+			result = counter_black - counter_white;
+		}else{
+			result = counter_white - counter_black;
+		}
+		return result;
 	}
+	
 }
