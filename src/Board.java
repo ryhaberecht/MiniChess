@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.Reader;
 import java.io.Writer;
 import java.util.ArrayList;
+import java.util.IdentityHashMap;
 
 public class Board
 {
@@ -14,7 +15,9 @@ public class Board
 
 	char onMove; // Has B or W the next move?
 
-	ArrayList<Move> legalMovesForNextTurn;
+	ArrayList<Move> legalMovesForNextTurn;	// list of legal moves for next turn
+	
+	float score;	// the score for the color to move next
 
 	// test function, no error means it works Ok
 	public static void main(String args[]) throws IOException
@@ -47,6 +50,16 @@ public class Board
 		board.move(new Move("a5-a4"));
 		System.out.println(board.toString());
 		System.out.println();
+	}
+	
+	@SuppressWarnings("unchecked")
+	public Board(Board board)
+	{
+		this.squares = board.squares;
+		this.moveNum = board.moveNum;
+		this.onMove = board.onMove;
+		this.legalMovesForNextTurn = (ArrayList<Move>) board.legalMovesForNextTurn.clone();
+		this.score = board.score;
 	}
 
 	// create new board from state in "state"
@@ -152,7 +165,11 @@ public class Board
 		}
 
 		// calculate all valid moves for next turn
+		this.legalMovesForNextTurn = new ArrayList<Move>();
 		this.legalMovesForNextTurn = getAllLegalMoves(this.onMove);
+		
+		// calculate initial board score
+		this.score = calculateHeuristicScore();
 	}
 
 	// print state into standardized string (39 or 40 characters, depending on nr. of move)
@@ -290,6 +307,9 @@ public class Board
 			//System.out.println("No valid turns for " + this.onMove + " in next turn. " + returnValue + " wins!");
 		}
 
+		// calculate new board score
+		this.score = calculateHeuristicScore();
+		
 		return returnValue;
 	}
 
@@ -376,7 +396,8 @@ public class Board
 			throw new Error("color is not B or W");
 		}
 
-		ArrayList<Move> legalMoves = new ArrayList<Move>();
+		this.legalMovesForNextTurn.clear();
+		ArrayList<Move> legalMoves = this.legalMovesForNextTurn;
 
 		// scan all squares for a piece of my color
 		char piece;
@@ -485,9 +506,31 @@ public class Board
 	
 	public Move getRandomHeuristicAiMove()
 	{
-		int listLength = this.legalMovesForNextTurn.size();
+		// create move-indexed map for board copies
+		IdentityHashMap<Move, Board> boardsForNextLegalMoves = new IdentityHashMap<Move, Board>(this.legalMovesForNextTurn.size());
+		float lowestScore = Float.MAX_VALUE;
+		
+		// for every legal move
+		for (Move move : this.legalMovesForNextTurn) {
+			Board boardCopy = new Board(this);	// create board copy
+			boardsForNextLegalMoves.put(move, boardCopy);	// add board copy to map
+			boardCopy.move(move);	// make move on copy
+			if (boardCopy.score < lowestScore) {	// save board score if lowest
+				lowestScore = boardCopy.score;
+			}
+		}
+		
+		// only keep boards with lowest score
+		for (Board board : boardsForNextLegalMoves.values()) {
+			if (board.score > lowestScore) {
+				boardsForNextLegalMoves.remove(board);
+			}
+		}
+		
+		// return random one of the moves left
+		int listLength = boardsForNextLegalMoves.size();
 		int randomIndex = (int) (Math.random() * listLength);
-		return this.legalMovesForNextTurn.get(randomIndex);
+		return (Move) boardsForNextLegalMoves.keySet().toArray()[randomIndex];
 	}
 
 	public Move getAiMove()
@@ -497,8 +540,8 @@ public class Board
 	
 	// returns points for the current board and for the color who will take the next turn.
 	// positive points show that the color taking the next turn is winning, negative that it is losing.
-	public float calculateHeuristicScore()
+	private float calculateHeuristicScore()
 	{
-		
+		return 0.0f;
 	}
 }
