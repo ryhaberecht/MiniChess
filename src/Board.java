@@ -533,8 +533,8 @@ public class Board
 	// positive points show that the color taking the next turn is winning, negative that it is losing.
 	public float calculateHeuristicScore() // TODO optimize: do not calculate but change for very move
 	{
-		float counter_white = 0;
-		float counter_black = 0;
+		int counter_white = 0;
+		int counter_black = 0;
 		float result = 0;
 		for (int i = 0; i <= Constants.MAX_ROW; i++) {
 			for (int j = 0; j <= Constants.MAX_COLUMN; j++) {
