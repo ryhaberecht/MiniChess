@@ -8,5 +8,5 @@ public final class Constants
 	public final static String PORT = "21";
 	public final static String USERNAME = "MiniCheese";
 	public final static String PASSWORD = "appenzeller";
-	public final static short NEGAMAX_RECURSION_DEPTH = 2;
+	public final static int NEGAMAX_RECURSION_DEPTH = 2;
 }

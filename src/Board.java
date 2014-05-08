@@ -25,7 +25,8 @@ public class Board
 	public static void main(String args[]) throws IOException
 	{
 		// Test
-
+		
+		System.out.println();
 		// reader + writer
 		Reader reader = new FileReader("input.txt");
 		Board board2 = new Board(reader);
@@ -538,39 +539,53 @@ public class Board
 
 	// returns points for the current board and for the color who will take the next turn.
 	// positive points show that the color taking the next turn is winning, negative that it is losing.
-	public static float calculateHeuristicScore(Board board) // TODO optimize: do not calculate but change for very move
+	public static float calculateHeuristicScore(Board board)
 	{
 		int counter_white = 0;
 		int counter_black = 0;
 		float result = 0;
+		char position;
+		
 		for (int i = 0; i <= Constants.MAX_ROW; i++) {
 			for (int j = 0; j <= Constants.MAX_COLUMN; j++) {
-				char position = board.squares[i][j];
+				position = board.squares[i][j];
 				switch (position) {
 				case 'K':
 					counter_white += 10000;
+					break;
 				case 'Q':
 					counter_white += 9;
+					break;
 				case 'R':
 					counter_white += 5;
+					break;
 				case 'N':
 					counter_white += 3;
+					break;
 				case 'B':
 					counter_white += 3;
+					break;
 				case 'P':
 					counter_white += 1;
+					break;
 				case 'k':
 					counter_black += 10000;
+					break;
 				case 'q':
 					counter_black += 9;
+					break;
 				case 'r':
 					counter_black += 5;
+					break;
 				case 'n':
 					counter_black += 3;
+					break;
 				case 'b':
 					counter_black += 3;
+					break;
 				case 'p':
 					counter_black += 1;
+					break;
 				}
 			}
 		}
@@ -580,6 +595,7 @@ public class Board
 		else {
 			result = counter_white - counter_black;
 		}
+		//System.out.println("Heuristic score: "+result);
 		return result;
 	}
 
@@ -588,11 +604,13 @@ public class Board
 		// create move-indexed map for board copies
 		ArrayList<Board> boardsForNextLegalMoves = new ArrayList<Board>(this.legalMovesForNextTurn.size());
 
-		float highestScore = Float.MIN_VALUE;
+		float highestScore = Float.NEGATIVE_INFINITY;
 		char winCondition;
 
 		// for every legal move
 		for (Move move : this.legalMovesForNextTurn) {
+			
+			//System.out.println("Considering move: "+move.toString());
 			
 			float currentScore;
 			Board boardCopy = new Board(this); // create board copy
@@ -617,6 +635,7 @@ public class Board
 			// save board score if highest
 			if (currentScore > highestScore) {
 				highestScore = currentScore;
+				//System.out.println("new highest score in move: " + currentScore);
 			}
 
 			boardCopy.score = currentScore;
@@ -630,6 +649,7 @@ public class Board
 		for (Board board : boardsForNextLegalMoves) {
 			if (board.score >= highestScore) {
 				survivingBoardsList.add(board);
+				//System.out.println("board mit score " + board.score + " zur survivingBoardsList hinzugefügt.");
 			}
 		}
 
@@ -641,14 +661,14 @@ public class Board
 			return survivingBoardsList.get(randomIndex).moveTaken;
 		}
 		else {
-			return null; // FIXME
+			return null; // should never ever happen
 		}
 	}
 
 	// search for the highest score
 	public float getNegamaxScore(Board board, int recursionDepth)
 	{
-		float highestScore = Float.MIN_VALUE;
+		float highestScore = Float.NEGATIVE_INFINITY;
 		char winCondition;
 
 		// if recursion reached 0, return score
@@ -682,6 +702,7 @@ public class Board
 			// save board score if highest
 			if (currentScore > highestScore) {
 				highestScore = currentScore;
+				//System.out.println("new highest score: " + highestScore);
 			}
 		}
 
