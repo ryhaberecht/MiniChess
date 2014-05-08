@@ -509,7 +509,7 @@ public class Board
 		for (Move move : this.legalMovesForNextTurn) {
 			Board boardCopy = new Board(this); // create board copy
 			boardCopy.move(move); // make move on copy
-			boardCopy.score = calculateHeuristicScore(this); // calculate new board score
+			boardCopy.score = calculateHeuristicScore(boardCopy); // calculate new board score
 			boardsForNextLegalMoves.put(move, boardCopy); // add board copy to map
 			if (boardCopy.score < lowestScore) { // save board score if lowest
 				lowestScore = boardCopy.score;
@@ -531,7 +531,7 @@ public class Board
 
 	public Move getAiMove()
 	{
-		return this.getNegamaxAiMove();
+		return this.getRandomHeuristicAiMove();
 	}
 
 	// returns points for the current board and for the color who will take the next turn.
