@@ -66,10 +66,11 @@ public class Driver
 			do {
 				Move nextMove;
 				if (flip) {
-					nextMove = board.getRandomHeuristicAiMove();
+					//nextMove = board.getRandomHeuristicAiMove();
+					nextMove = board.getNegamaxAiMoveWithTimeLimit();
 				}
 				else {
-					nextMove = board.getNegamaxAiMove();
+					nextMove = board.getNegamaxAiMoveWithTimeLimit();
 				}
 				System.out.println(nextMove.toString());
 				winCondition = board.move(nextMove);

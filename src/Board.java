@@ -7,6 +7,11 @@ import java.util.ArrayList;
 
 public class Board
 {
+	private static boolean abortCalculation = false;
+	
+	private static long startTime;
+	
+	private static int numberOfRecursions = 0;
 
 	char[][] squares = new char[Constants.MAX_ROW + 1][Constants.MAX_COLUMN + 1]; // number / letter -> row / column
 
@@ -535,8 +540,8 @@ public class Board
 
 	public Move getAiMove()
 	{
-		return this.getNegamaxAiMove();
-		//return this.getRandomHeuristicAiMove();
+		return this.getNegamaxAiMoveWithTimeLimit();
+		// return this.getRandomHeuristicAiMove();
 	}
 
 	// returns points for the current board and for the color who will take the next turn.
@@ -553,7 +558,7 @@ public class Board
 				position = board.squares[i][j];
 				switch (position) {
 				case 'K':
-					counter_white += 10000;
+					counter_white += 100000;
 					break;
 				case 'Q':
 					counter_white += 9;
@@ -571,7 +576,7 @@ public class Board
 					counter_white += 1;
 					break;
 				case 'k':
-					counter_black += 10000;
+					counter_black += 100000;
 					break;
 				case 'q':
 					counter_black += 9;
@@ -601,7 +606,32 @@ public class Board
 		return result;
 	}
 
-	public Move getNegamaxAiMove()
+	public Move getNegamaxAiMoveWithTimeLimit()
+	{
+		int depth = 0;
+		Move bestMoveYet = null;
+		Move lastMove = null;
+		
+		Board.startTime = System.currentTimeMillis();	// save current system time
+
+		while (Board.abortCalculation == false) {	// still got time
+			
+			bestMoveYet = lastMove;
+			
+			lastMove = getNegamaxAiMove(depth);	// calculate with specific depth
+			
+			depth++;	// increase depth for next run
+		}
+
+		System.out.println("Depth used: " + (depth - 1));
+		
+		Board.abortCalculation = false;	// reset aborting calculation for future call
+		Board.numberOfRecursions = 0;	// reset number of recursions for future call
+		
+		return bestMoveYet;
+	}
+
+	public Move getNegamaxAiMove(int depth)
 	{
 		// create move-indexed map for board copies
 		ArrayList<Board> boardsForNextLegalMoves = new ArrayList<Board>(this.legalMovesForNextTurn.size());
@@ -624,14 +654,14 @@ public class Board
 			}
 			else if (winCondition == 'B' || winCondition == 'W') { // some side wins
 				if (winCondition == this.onMove) { // I win
-					currentScore = 10000;
+					currentScore = 100000;
 				}
 				else { // opponent wins
 					throw new Error("Can not capture own king.");
 				}
 			}
 			else {
-				currentScore = -getNegamaxScore(boardCopy, Constants.NEGAMAX_RECURSION_DEPTH); // calculate new board score
+				currentScore = -getNegamaxScore(boardCopy, depth); // calculate new board score
 			}
 
 			// save board score if highest
@@ -670,6 +700,21 @@ public class Board
 	// search for the highest score
 	public float getNegamaxScore(Board board, int recursionDepth)
 	{
+		// count number of recursions
+		Board.numberOfRecursions += 1;
+		if (Board.numberOfRecursions >= 10000) {	// should check time
+			
+			// took longer than I am allowed to
+			if (System.currentTimeMillis() - Board.startTime >= Constants.MILLISECONDS_PER_MOVE) {
+				Board.abortCalculation = true;	// signal abort calculation
+			}
+			Board.numberOfRecursions = 0;	// reset recursion counter
+		}
+		
+		if (Board.abortCalculation == true) {	// should abort calculation
+			return Float.NEGATIVE_INFINITY;
+		}
+		
 		float highestScore = Float.NEGATIVE_INFINITY;
 		char winCondition;
 
@@ -688,10 +733,10 @@ public class Board
 			// act on game-over
 			if (winCondition == '=') { // tie
 				currentScore = 0;
-			}
+			}// increase depth for next run
 			else if (winCondition == 'B' || winCondition == 'W') { // some side wins
 				if (winCondition == board.onMove) { // I win
-					currentScore = 10000;
+					currentScore = 100000;
 				}
 				else { // opponent wins
 					throw new Error("Can not capture own king.");
