@@ -298,7 +298,7 @@ public class Board
 		// increase number of turns (moves)
 		this.moveNum += 1;
 		// tie?
-		if (this.moveNum == 81 && (returnValue != 'W' || returnValue != 'B')) {
+		if (this.moveNum >= 81 && (returnValue != 'W' || returnValue != 'B')) {
 			returnValue = '='; // game ended with tie
 		}
 
@@ -622,9 +622,11 @@ public class Board
 			
 			bestMoveYet = lastMove;
 			
-			lastMove = getNegamaxAiMove(depth);	// calculate with specific depth
+			//lastMove = getNegamaxAiMove(depth);	// calculate with specific depth
+			lastMove = getNegamaxAiMoveAB(depth);	// calculate with specific depth
 			
 			depth++;	// increase depth for next run
+			if (Board.abortCalculation == true || depth >= 100)	break;
 		}
 
 		//System.out.println("Depth used: " + (depth - 1));
@@ -751,6 +753,131 @@ public class Board
 			}
 			else {
 				currentScore = -getNegamaxScore(boardCopy, (recursionDepth - 1)); // calculate new board score
+			}
+
+			// save board score if highest
+			if (currentScore >= highestScore) {
+				highestScore = currentScore;
+				// System.out.println("new highest score: " + highestScore);
+			}
+		}
+
+		return highestScore;
+	}
+	
+	public Move getNegamaxAiMoveAB(int depth)
+	{
+		// create move-indexed map for board copies
+		ArrayList<Board> boardsForNextLegalMoves = new ArrayList<Board>(this.legalMovesForNextTurn.size());
+
+		float highestScore = Float.NEGATIVE_INFINITY;
+		char winCondition;
+
+		// for every legal move
+		for (Move move : this.legalMovesForNextTurn) {
+
+			// System.out.println("Considering move: "+move.toString());
+
+			float currentScore;
+			Board boardCopy = new Board(this); // create board copy
+			winCondition = boardCopy.move(move); // make move on copy
+
+			// act on game-over
+			if (winCondition == '=') { // tie
+				currentScore = 0;
+			}
+			else if (winCondition == 'B' || winCondition == 'W') { // some side wins
+				if (winCondition == this.onMove) { // I win
+					currentScore = 100000;
+				}
+				else { // opponent wins
+					throw new Error("Can not capture own king.");
+				}
+			}
+			else {
+				currentScore = -getNegamaxScoreAB(boardCopy, depth); // calculate new board score
+			}
+
+			// save board score if highest
+			if (currentScore > highestScore) {
+				highestScore = currentScore;
+				// System.out.println("new highest score in move: " + currentScore);
+			}
+
+			boardCopy.score = currentScore;
+			boardCopy.moveTaken = move;
+
+			boardsForNextLegalMoves.add(boardCopy); // add board copy to map
+		}
+
+		// only keep boards with largest score
+		ArrayList<Board> survivingBoardsList = new ArrayList<Board>();
+		for (Board board : boardsForNextLegalMoves) {
+			if (board.score >= highestScore) {
+				survivingBoardsList.add(board);
+				// System.out.println("board mit score " + board.score + " zur survivingBoardsList hinzugefügt.");
+			}
+		}
+
+		// if there are several equally good moves
+		if (survivingBoardsList.size() > 0) {
+			// return random one of the moves left
+			int listLength = survivingBoardsList.size();
+			int randomIndex = (int) (Math.random() * listLength);
+			return survivingBoardsList.get(randomIndex).moveTaken;
+		}
+		else {
+			return null; // should never ever happen
+		}
+	}
+
+	// search for the highest score
+	public float getNegamaxScoreAB(Board board, int recursionDepth)
+	{
+		// count number of recursions
+		Board.numberOfRecursions += 1;
+		if (Board.numberOfRecursions >= 10000) {	// should check time
+			
+			// took longer than I am allowed to
+			if (System.currentTimeMillis() - Board.startTime >= Constants.MILLISECONDS_PER_MOVE) {
+				Board.abortCalculation = true;	// signal abort calculation
+			}
+			Board.numberOfRecursions = 0;	// reset recursion counter
+		}
+		
+		if (Board.abortCalculation == true) {	// should abort calculation
+			return Float.NEGATIVE_INFINITY;
+		}
+		
+		float highestScore = Float.NEGATIVE_INFINITY;
+		char winCondition;
+
+		// if recursion reached 0, return score
+		if (recursionDepth == 0) {
+			return calculateHeuristicScore(board);
+		}
+
+		// for every legal move
+		for (Move move : board.legalMovesForNextTurn) {
+
+			float currentScore;
+			Board boardCopy = new Board(board); // create board copy
+			winCondition = boardCopy.move(move); // make move on copy
+
+			// act on game-over
+			if (winCondition == '=') { // tie
+				currentScore = 0;
+			}// increase depth for next run
+			else if (winCondition == 'B' || winCondition == 'W') { // some side wins
+				if (winCondition == board.onMove) { // I win
+					currentScore = 100000;
+				}
+				else { // opponent wins
+					throw new Error("Can not capture own king.");
+				}
+			}
+			else {
+				currentScore = -getNegamaxScoreAB(boardCopy, (recursionDepth - 1)); // calculate new board score
 			}
 
 			// save board score if highest
