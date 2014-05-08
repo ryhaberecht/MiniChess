@@ -60,9 +60,17 @@ public class Driver
 			System.out.println();
 			//System.out.println(board.printValidMovesForNextTurn());
 			System.out.println("Next move: ");
+			
+			boolean flip = true;
 
 			do {
-				Move nextMove = board.getAiMove();
+				Move nextMove;
+				if (flip) {
+					nextMove = board.getRandomHeuristicAiMove();
+				}
+				else {
+					nextMove = board.getNegamaxAiMove();
+				}
 				System.out.println(nextMove.toString());
 				winCondition = board.move(nextMove);
 				System.out.println();
@@ -92,6 +100,7 @@ public class Driver
 					scanIn.close();
 					throw new Error("Invalid win condition returned by move()");
 				}
+				flip = !flip;
 			}
 			while (true);
 		}
