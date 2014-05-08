@@ -19,6 +19,8 @@ public class Board
 
 	float score; // the score for the color to move next
 
+	Move moveTaken;
+
 	// test function, no error means it works Ok
 	public static void main(String args[]) throws IOException
 	{
@@ -531,7 +533,7 @@ public class Board
 
 	public Move getAiMove()
 	{
-		return this.getRandomHeuristicAiMove();
+		return this.getNegamaxAiMove();
 	}
 
 	// returns points for the current board and for the color who will take the next turn.
@@ -584,56 +586,62 @@ public class Board
 	public Move getNegamaxAiMove()
 	{
 		// create move-indexed map for board copies
-		IdentityHashMap<Move, Board> boardsForNextLegalMoves = new IdentityHashMap<Move, Board>(this.legalMovesForNextTurn.size());
+		ArrayList<Board> boardsForNextLegalMoves = new ArrayList<Board>(this.legalMovesForNextTurn.size());
 
 		float highestScore = Float.MIN_VALUE;
 		char winCondition;
 
 		// for every legal move
 		for (Move move : this.legalMovesForNextTurn) {
+			
+			float currentScore;
 			Board boardCopy = new Board(this); // create board copy
 			winCondition = boardCopy.move(move); // make move on copy
 
 			// act on game-over
 			if (winCondition == '=') { // tie
-				boardCopy.score = 0;
+				currentScore = 0;
 			}
 			else if (winCondition == 'B' || winCondition == 'W') { // some side wins
-				if (winCondition == boardCopy.onMove) { // opponent wins
-					//boardCopy.score = -10000;
+				if (winCondition == this.onMove) { // I win
+					currentScore = 10000;
 				}
-				else { // I win
-					boardCopy.score = 10000;
+				else { // opponent wins
+					throw new Error("Can not capture own king.");
 				}
 			}
 			else {
-				boardCopy.score = getNegamaxScore(boardCopy, Constants.NEGAMAX_RECURSION_DEPTH); // calculate new board score
+				currentScore = -getNegamaxScore(boardCopy, Constants.NEGAMAX_RECURSION_DEPTH); // calculate new board score
 			}
 
 			// save board score if highest
-			if (boardCopy.score > highestScore) {
-				highestScore = boardCopy.score;
+			if (currentScore > highestScore) {
+				highestScore = currentScore;
 			}
 
-			boardsForNextLegalMoves.put(move, boardCopy); // add board copy to map
+			boardCopy.score = currentScore;
+			boardCopy.moveTaken = move;
+
+			boardsForNextLegalMoves.add(boardCopy); // add board copy to map
 		}
 
 		// only keep boards with largest score
-		for (Board board : boardsForNextLegalMoves.values()) {
-			if (-board.score < highestScore) {
-				boardsForNextLegalMoves.remove(board);
+		ArrayList<Board> survivingBoardsList = new ArrayList<Board>();
+		for (Board board : boardsForNextLegalMoves) {
+			if (board.score >= highestScore) {
+				survivingBoardsList.add(board);
 			}
 		}
 
 		// if there are several equally good moves
-		if (boardsForNextLegalMoves.size() > 1) {
+		if (survivingBoardsList.size() > 0) {
 			// return random one of the moves left
-			int listLength = boardsForNextLegalMoves.size();
+			int listLength = survivingBoardsList.size();
 			int randomIndex = (int) (Math.random() * listLength);
-			return (Move) boardsForNextLegalMoves.keySet().toArray()[randomIndex];
+			return survivingBoardsList.get(randomIndex).moveTaken;
 		}
 		else {
-			return (Move) boardsForNextLegalMoves.keySet().toArray()[0];
+			return null; // FIXME
 		}
 	}
 
@@ -650,28 +658,30 @@ public class Board
 
 		// for every legal move
 		for (Move move : board.legalMovesForNextTurn) {
+			
+			float currentScore;
 			Board boardCopy = new Board(board); // create board copy
 			winCondition = boardCopy.move(move); // make move on copy
 
 			// act on game-over
 			if (winCondition == '=') { // tie
-				boardCopy.score = 0;
+				currentScore = 0;
 			}
 			else if (winCondition == 'B' || winCondition == 'W') { // some side wins
-				if (winCondition == boardCopy.onMove) { // opponent wins
-					//boardCopy.score = -10000;
+				if (winCondition == board.onMove) { // I win
+					currentScore = 10000;
 				}
-				else { // I win
-					boardCopy.score = 10000;
+				else { // opponent wins
+					throw new Error("Can not capture own king.");
 				}
 			}
 			else {
-				boardCopy.score = getNegamaxScore(boardCopy, (recursionDepth - 1)); // calculate new board score
+				currentScore = - getNegamaxScore(boardCopy, (recursionDepth - 1)); // calculate new board score
 			}
 
 			// save board score if highest
-			if (-boardCopy.score > highestScore) {
-				highestScore = -boardCopy.score;
+			if (currentScore > highestScore) {
+				highestScore = currentScore;
 			}
 		}
 
