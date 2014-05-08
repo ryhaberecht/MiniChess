@@ -871,15 +871,28 @@ public class Board
 		for (Move move : board.legalMovesForNextTurn) {
 
 			float currentScore;
-			Board boardCopy = new Board(board); // create board copy
-			winCondition = boardCopy.move(move); // make move on copy
+			// make move, save old values
+			// copy squares
+			char[][] squares = new char[Constants.MAX_ROW + 1][Constants.MAX_COLUMN + 1];
+			for (int row = Constants.MAX_ROW; row >= Constants.MIN_ROW; row--) {
+				for (int col = Constants.MIN_COLUMN; col <= Constants.MAX_COLUMN; col++) {
+					squares[row][col] = board.squares[row][col];
+				}
+			}
+			// copy rest
+			int moveNum = board.moveNum;
+			char onMove = board.onMove;
+			ArrayList<Move> legalMovesForNextTurn = board.legalMovesForNextTurn;
+			float score = board.score;
+			
+			winCondition = board.move(move); // make move
 
 			// act on game-over
 			if (winCondition == '=') { // tie
 				currentScore = 0;
 			}// increase depth for next run
 			else if (winCondition == 'B' || winCondition == 'W') { // some side wins
-				if (winCondition == board.onMove) { // I win
+				if (winCondition == onMove) { // I win
 					currentScore = 10000;
 				}
 				else { // opponent wins
@@ -888,9 +901,16 @@ public class Board
 				}
 			}
 			else {
-				currentScore = -getNegamaxScoreAB(boardCopy, (recursionDepth - 1), -b0, -a0); // calculate new board score
+				currentScore = -getNegamaxScoreAB(board, (recursionDepth - 1), -b0, -a0); // calculate new board score
 			}
 
+			// undo move
+			board.squares = squares;
+			board.moveNum = moveNum;
+			board.onMove = onMove;
+			board.legalMovesForNextTurn = legalMovesForNextTurn;
+			board.score = score;
+			
 			// abort if score is too high
 			if (currentScore >= b0) {
 				return currentScore;
