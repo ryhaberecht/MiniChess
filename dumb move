@@ -1,0 +1,45 @@
+Move Nr.: 22
+For Player: Black
+
+6|.kN.r
+5|.Q...
+4|...pn
+3|P..P.
+2|....K
+1|.RB..
+-----
+abcde
+
+Next move:
+e4-d2
+
+
+Move Nr.: 23
+For Player: White
+
+6|.kN.r
+5|.Q...
+4|...p.
+3|P..P.
+2|...nK
+1|.RB..
+-----
+abcde
+
+Next move:
+b5-b6
+
+
+Move Nr.: 23
+For Player: Black
+
+6|.QN.r
+5|.....
+4|...p.
+3|P..P.
+2|...nK
+1|.RB..
+-----
+abcde
+
+White wins!

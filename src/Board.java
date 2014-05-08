@@ -83,7 +83,7 @@ public class Board
 	// create new board from state in "reader"
 	public Board(Reader reader) throws IOException
 	{
-		char[] cbuf = new char[39];
+		char[] cbuf = new char[40];
 		reader.read(cbuf);
 		makeBoard(new String(cbuf));
 	}
@@ -113,6 +113,7 @@ public class Board
 		if (this.moveNum < 1 || this.moveNum > 80) {
 			throw new Error("moveNum impossible, < 0 or > 80! moveNum = " + this.moveNum);
 		}
+		//System.out.println(moveNum);
 
 		// check if whose next makes sense and save
 		if (this.moveNum < 10) {
@@ -124,9 +125,11 @@ public class Board
 		if (this.onMove != 'B' && this.onMove != 'W') {
 			throw new Error("onMove is not B or W");
 		}
+		//System.out.println(onMove);
 
 		// correct this.moveNum because it is 40 moves each
 		this.moveNum = ((this.onMove == 'W') ? ((this.moveNum * 2) - 1) : (this.moveNum * 2));
+		//System.out.println(moveNum);
 
 		// check if characters are a valid piece or empty and save
 		char currentChar;
@@ -134,6 +137,7 @@ public class Board
 
 			for (int column = Constants.MIN_COLUMN; column <= Constants.MAX_COLUMN; column++) {
 
+				//System.out.println(lines[line].length());
 				currentChar = lines[line].charAt(column);
 
 				switch (currentChar) {
@@ -623,11 +627,14 @@ public class Board
 			depth++;	// increase depth for next run
 		}
 
-		System.out.println("Depth used: " + (depth - 1));
+		//System.out.println("Depth used: " + (depth - 1));
 		
 		Board.abortCalculation = false;	// reset aborting calculation for future call
 		Board.numberOfRecursions = 0;	// reset number of recursions for future call
 		
+		if (bestMoveYet == null) {
+			throw new Error("Was too slow to calculate move, bestMoveYet == null");
+		}
 		return bestMoveYet;
 	}
 
