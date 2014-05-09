@@ -1,4 +1,6 @@
+import java.io.FileReader;
 import java.io.IOException;
+import java.io.Reader;
 import java.util.Scanner;
 
 public class Driver
@@ -55,7 +57,6 @@ public class Driver
 			scanIn.close();
 		}
 		else if ("ai-ai".matches(gameType) || "3".matches(gameType)) { // ai on ai
-
 			Reader reader = new FileReader("input.txt");
 			board = new Board(reader);
 			System.out.println(board.toHumanReadableString());
