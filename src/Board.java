@@ -8,9 +8,9 @@ import java.util.ArrayList;
 public class Board
 {
 	private static boolean abortCalculation = false;
-	
+
 	private static long startTime;
-	
+
 	private static int numberOfRecursions = 0;
 
 	char[][] squares = new char[Constants.MAX_ROW + 1][Constants.MAX_COLUMN + 1]; // number / letter -> row / column
@@ -113,7 +113,7 @@ public class Board
 		if (this.moveNum < 1 || this.moveNum > 80) {
 			throw new Error("moveNum impossible, < 0 or > 80! moveNum = " + this.moveNum);
 		}
-		//System.out.println(moveNum);
+		// System.out.println(moveNum);
 
 		// check if whose next makes sense and save
 		if (this.moveNum < 10) {
@@ -125,11 +125,11 @@ public class Board
 		if (this.onMove != 'B' && this.onMove != 'W') {
 			throw new Error("onMove is not B or W");
 		}
-		//System.out.println(onMove);
+		// System.out.println(onMove);
 
 		// correct this.moveNum because it is 40 moves each
 		this.moveNum = ((this.onMove == 'W') ? ((this.moveNum * 2) - 1) : (this.moveNum * 2));
-		//System.out.println(moveNum);
+		// System.out.println(moveNum);
 
 		// check if characters are a valid piece or empty and save
 		char currentChar;
@@ -137,7 +137,7 @@ public class Board
 
 			for (int column = Constants.MIN_COLUMN; column <= Constants.MAX_COLUMN; column++) {
 
-				//System.out.println(lines[line].length());
+				// System.out.println(lines[line].length());
 				currentChar = lines[line].charAt(column);
 
 				switch (currentChar) {
@@ -615,25 +615,31 @@ public class Board
 		int depth = 0;
 		Move bestMoveYet = null;
 		Move lastMove = null;
-		
-		Board.startTime = System.currentTimeMillis();	// save current system time
 
-		while (Board.abortCalculation == false) {	// still got time
-			
+		Board.startTime = System.currentTimeMillis(); // save current system time
+
+		while (Board.abortCalculation == false) { // still got time
+
 			bestMoveYet = lastMove;
-			
-			//lastMove = getNegamaxAiMove(depth);	// calculate with specific depth
-			lastMove = getNegamaxAiMoveAB(depth);	// calculate with specific depth
-			
-			depth++;	// increase depth for next run
-			if (Board.abortCalculation == true || depth >= 100)	break;
+
+			// lastMove = getNegamaxAiMove(depth); // calculate with specific depth
+			lastMove = getNegamaxAiMoveAB(depth); // calculate with specific depth
+
+			depth++; // increase depth for next run
+
+			if (System.currentTimeMillis() - Board.startTime >= Constants.MILLISECONDS_PER_MOVE) {
+				Board.abortCalculation = true; // signal abort calculation
+			}
+
+			if (Board.abortCalculation == true || depth >= 100)
+				break;
 		}
 
 		System.out.println("Depth used: " + (depth - 1));
-		
-		Board.abortCalculation = false;	// reset aborting calculation for future call
-		Board.numberOfRecursions = 0;	// reset number of recursions for future call
-		
+
+		Board.abortCalculation = false; // reset aborting calculation for future call
+		Board.numberOfRecursions = 0; // reset number of recursions for future call
+
 		if (bestMoveYet == null) {
 			throw new Error("Was too slow to calculate move, bestMoveYet == null");
 		}
@@ -667,7 +673,7 @@ public class Board
 				}
 				else { // opponent wins
 					currentScore = -10000;
-					//throw new Error("Can not capture own king.");
+					// throw new Error("Can not capture own king.");
 				}
 			}
 			else {
@@ -712,19 +718,19 @@ public class Board
 	{
 		// count number of recursions
 		Board.numberOfRecursions += 1;
-		if (Board.numberOfRecursions >= 10000) {	// should check time
-			
+		if (Board.numberOfRecursions >= 10000) { // should check time
+
 			// took longer than I am allowed to
 			if (System.currentTimeMillis() - Board.startTime >= Constants.MILLISECONDS_PER_MOVE) {
-				Board.abortCalculation = true;	// signal abort calculation
+				Board.abortCalculation = true; // signal abort calculation
 			}
-			Board.numberOfRecursions = 0;	// reset recursion counter
+			Board.numberOfRecursions = 0; // reset recursion counter
 		}
-		
-		if (Board.abortCalculation == true) {	// should abort calculation
+
+		if (Board.abortCalculation == true) { // should abort calculation
 			return Float.NEGATIVE_INFINITY;
 		}
-		
+
 		float highestScore = Float.NEGATIVE_INFINITY;
 		char winCondition;
 
@@ -750,7 +756,7 @@ public class Board
 				}
 				else { // opponent wins
 					currentScore = -10000;
-					//throw new Error("Can not capture own king.");
+					// throw new Error("Can not capture own king.");
 				}
 			}
 			else {
@@ -766,12 +772,12 @@ public class Board
 
 		return highestScore;
 	}
-	
+
 	public Move getNegamaxAiMoveAB(int depth)
 	{
 		float a0 = Float.NEGATIVE_INFINITY;
 		float b0 = Float.POSITIVE_INFINITY;
-		
+
 		// create move-indexed map for board copies
 		ArrayList<Board> boardsForNextLegalMoves = new ArrayList<Board>(this.legalMovesForNextTurn.size());
 
@@ -795,8 +801,8 @@ public class Board
 					currentScore = 10000;
 				}
 				else { // opponent wins
-					currentScore = -10000;
-					//throw new Error("Can not capture own king.");
+						// currentScore = -10000;
+					throw new Error("Can not capture own king.");
 				}
 			}
 			else {
@@ -840,20 +846,21 @@ public class Board
 	{
 		// count number of recursions
 		Board.numberOfRecursions += 1;
-		if (Board.numberOfRecursions >= 10000) {	// should check time
-			
+		if (Board.numberOfRecursions >= 10000) { // should check time
+
 			// took longer than I am allowed to
 			if (System.currentTimeMillis() - Board.startTime >= Constants.MILLISECONDS_PER_MOVE) {
-				Board.abortCalculation = true;	// signal abort calculation
+				Board.abortCalculation = true; // signal abort calculation
 			}
-			Board.numberOfRecursions = 0;	// reset recursion counter
+			Board.numberOfRecursions = 0; // reset recursion counter
 		}
-		
-		if (Board.abortCalculation == true) {	// should abort calculation
+
+		if (Board.abortCalculation == true) { // should abort calculation
 			return Float.NEGATIVE_INFINITY;
 		}
-		
+
 		char winCondition;
+		float highestScore = Float.NEGATIVE_INFINITY;
 
 		// if recursion reached 0, return score
 		if (recursionDepth == 0) {
@@ -864,37 +871,62 @@ public class Board
 		for (Move move : board.legalMovesForNextTurn) {
 
 			float currentScore;
-			Board boardCopy = new Board(board); // create board copy
-			winCondition = boardCopy.move(move); // make move on copy
+			// make move, save old values
+			// copy squares
+			char[][] squares = new char[Constants.MAX_ROW + 1][Constants.MAX_COLUMN + 1];
+			for (int row = Constants.MAX_ROW; row >= Constants.MIN_ROW; row--) {
+				for (int col = Constants.MIN_COLUMN; col <= Constants.MAX_COLUMN; col++) {
+					squares[row][col] = board.squares[row][col];
+				}
+			}
+			// copy rest
+			int moveNum = board.moveNum;
+			char onMove = board.onMove;
+			ArrayList<Move> legalMovesForNextTurn = board.legalMovesForNextTurn;
+			float score = board.score;
+			
+			winCondition = board.move(move); // make move
 
 			// act on game-over
 			if (winCondition == '=') { // tie
 				currentScore = 0;
 			}// increase depth for next run
 			else if (winCondition == 'B' || winCondition == 'W') { // some side wins
-				if (winCondition == board.onMove) { // I win
+				if (winCondition == onMove) { // I win
 					currentScore = 10000;
 				}
 				else { // opponent wins
-					//throw new Error("Can not capture own king.");
-					currentScore = -10000;
+					throw new Error("Can not capture own king.");
+					// currentScore = -10000;
 				}
 			}
 			else {
-				currentScore = -getNegamaxScoreAB(boardCopy, (recursionDepth - 1), -b0, -a0); // calculate new board score
+				currentScore = -getNegamaxScoreAB(board, (recursionDepth - 1), -b0, -a0); // calculate new board score
 			}
 
+			// undo move
+			board.squares = squares;
+			board.moveNum = moveNum;
+			board.onMove = onMove;
+			board.legalMovesForNextTurn = legalMovesForNextTurn;
+			board.score = score;
+			
 			// abort if score is too high
-			if (currentScore > b0) {
+			if (currentScore >= b0) {
 				return currentScore;
 			}
-			
+
 			// save board score if highest
-			if (currentScore > a0) {
-				a0 = currentScore;
+			if (currentScore > highestScore) {
+				highestScore = currentScore;
+			}
+
+			// save new a0 if score higher
+			if (highestScore > a0) {
+				a0 = highestScore;
 			}
 		}
 
-		return a0;
+		return highestScore;
 	}
 }

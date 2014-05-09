@@ -56,8 +56,8 @@ public class Driver
 		}
 		else if ("ai-ai".matches(gameType) || "3".matches(gameType)) { // ai on ai
 
-			/*Reader reader = new FileReader("input.txt");
-			board = new Board(reader);*/
+			Reader reader = new FileReader("input.txt");
+			board = new Board(reader);
 			System.out.println(board.toHumanReadableString());
 			System.out.println();
 			//System.out.println(board.printValidMovesForNextTurn());
