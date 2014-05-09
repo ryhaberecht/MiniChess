@@ -13,6 +13,12 @@ public class Board
 
 	private static int numberOfRecursions = 0;
 
+	private static boolean winInCurrentDepth = false;
+
+	private static long millisecondsPerMove = 1000;
+
+	private static long millisecondsLeftForMatch = Constants.MILLISECONDS_PER_MATCH;
+
 	char[][] squares = new char[Constants.MAX_ROW + 1][Constants.MAX_COLUMN + 1]; // number / letter -> row / column
 
 	int moveNum; // number of next move taking place. 1 to 40 (40 = draw)
@@ -21,7 +27,7 @@ public class Board
 
 	ArrayList<Move> legalMovesForNextTurn; // list of legal moves for next turn
 
-	float score; // the score for the color to move next
+	int score; // the score for the color to move next
 
 	Move moveTaken;
 
@@ -514,7 +520,7 @@ public class Board
 	{
 		// create move-indexed map for board copies
 		ArrayList<Board> boardsForNextLegalMoves = new ArrayList<Board>(this.legalMovesForNextTurn.size());
-		float lowestScore = Float.POSITIVE_INFINITY;
+		int lowestScore = Integer.MAX_VALUE;
 
 		// for every legal move
 		for (Move move : this.legalMovesForNextTurn) {
@@ -550,11 +556,11 @@ public class Board
 
 	// returns points for the current board and for the color who will take the next turn.
 	// positive points show that the color taking the next turn is winning, negative that it is losing.
-	public static float calculateHeuristicScore(Board board)
+	public static int calculateHeuristicScore(Board board)
 	{
 		int counter_white = 0;
 		int counter_black = 0;
-		float result = 0;
+		int result = 0;
 		char position;
 
 		for (int i = 0; i <= Constants.MAX_ROW; i++) {
@@ -562,40 +568,50 @@ public class Board
 				position = board.squares[i][j];
 				switch (position) {
 				case 'K':
-					counter_white += 100000;
+					counter_white += 10000;
 					break;
 				case 'Q':
-					counter_white += 9;
+					counter_white += 70;
 					break;
 				case 'R':
-					counter_white += 5;
+					counter_white += 50;
 					break;
 				case 'N':
-					counter_white += 3;
+					counter_white += 20;
 					break;
 				case 'B':
-					counter_white += 3;
+					counter_white += 35;
 					break;
 				case 'P':
-					counter_white += 1;
+					if (i == Constants.MAX_ROW-1) { // about to be promoted to queen
+						counter_white += 20;
+					}
+					else {
+						counter_white += 10;
+					}
 					break;
 				case 'k':
-					counter_black += 100000;
+					counter_black += 10000;
 					break;
 				case 'q':
-					counter_black += 9;
+					counter_black += 70;
 					break;
 				case 'r':
-					counter_black += 5;
+					counter_black += 50;
 					break;
 				case 'n':
-					counter_black += 3;
+					counter_black += 20;
 					break;
 				case 'b':
-					counter_black += 3;
+					counter_black += 35;
 					break;
 				case 'p':
-					counter_black += 1;
+					if (i == Constants.MIN_ROW+1) { // promoted to queen
+						counter_black += 20;
+					}
+					else {
+						counter_black += 10;
+					}
 					break;
 				}
 			}
@@ -615,6 +631,8 @@ public class Board
 		int depth = 0;
 		Move bestMoveYet = null;
 		Move lastMove = null;
+		
+		System.out.println("Milliseconds for this move: " + Board.millisecondsPerMove);	//TODO
 
 		Board.startTime = System.currentTimeMillis(); // save current system time
 
@@ -627,18 +645,30 @@ public class Board
 
 			depth++; // increase depth for next run
 
-			if (System.currentTimeMillis() - Board.startTime >= Constants.MILLISECONDS_PER_MOVE) {
+			// work around some strange bug in java not updating time on time (duh...) with increasing number of recursions
+			if (System.currentTimeMillis() - Board.startTime >= Board.millisecondsPerMove) {
 				Board.abortCalculation = true; // signal abort calculation
 			}
 
-			if (Board.abortCalculation == true || depth >= 100)
+			if (Board.abortCalculation == true || depth >= 100) {
+				if (Board.winInCurrentDepth == true) { // lastMove was win, save it nevertheless
+					bestMoveYet = lastMove;
+				}
 				break;
+			}
 		}
 
-		System.out.println("Depth used: " + (depth - 1));
+		System.out.println("Depth used: " + (depth - 1));	// TODO
 
 		Board.abortCalculation = false; // reset aborting calculation for future call
+		Board.winInCurrentDepth = false; // reset win signal for future calls
 		Board.numberOfRecursions = 0; // reset number of recursions for future call
+		
+		// recalculate time per move
+		long totalTimeUsedSinceStart = System.currentTimeMillis() - Board.startTime;	// time for last move
+		Board.millisecondsLeftForMatch  -= totalTimeUsedSinceStart;	// total time left for match
+		int numberOfMovesLeft = Constants.NUMBER_OF_MOVES_PER_MATCH - ((this.onMove == 'W') ? ((this.moveNum + 1) / 2) : (this.moveNum / 2));	// moves left
+		Board.millisecondsPerMove = Board.millisecondsLeftForMatch / numberOfMovesLeft;
 
 		if (bestMoveYet == null) {
 			throw new Error("Was too slow to calculate move, bestMoveYet == null");
@@ -651,7 +681,7 @@ public class Board
 		// create move-indexed map for board copies
 		ArrayList<Board> boardsForNextLegalMoves = new ArrayList<Board>(this.legalMovesForNextTurn.size());
 
-		float highestScore = Float.NEGATIVE_INFINITY;
+		int highestScore = Integer.MIN_VALUE;
 		char winCondition;
 
 		// for every legal move
@@ -659,7 +689,7 @@ public class Board
 
 			// System.out.println("Considering move: "+move.toString());
 
-			float currentScore;
+			int currentScore;
 			Board boardCopy = new Board(this); // create board copy
 			winCondition = boardCopy.move(move); // make move on copy
 
@@ -714,24 +744,24 @@ public class Board
 	}
 
 	// search for the highest score
-	public float getNegamaxScore(Board board, int recursionDepth)
+	public int getNegamaxScore(Board board, int recursionDepth)
 	{
 		// count number of recursions
 		Board.numberOfRecursions += 1;
 		if (Board.numberOfRecursions >= 10000) { // should check time
 
 			// took longer than I am allowed to
-			if (System.currentTimeMillis() - Board.startTime >= Constants.MILLISECONDS_PER_MOVE) {
+			if (System.currentTimeMillis() - Board.startTime >= Board.millisecondsPerMove) {
 				Board.abortCalculation = true; // signal abort calculation
 			}
 			Board.numberOfRecursions = 0; // reset recursion counter
 		}
 
 		if (Board.abortCalculation == true) { // should abort calculation
-			return Float.NEGATIVE_INFINITY;
+			return Integer.MIN_VALUE;
 		}
 
-		float highestScore = Float.NEGATIVE_INFINITY;
+		int highestScore = Integer.MIN_VALUE;
 		char winCondition;
 
 		// if recursion reached 0, return score
@@ -742,7 +772,7 @@ public class Board
 		// for every legal move
 		for (Move move : board.legalMovesForNextTurn) {
 
-			float currentScore;
+			int currentScore;
 			Board boardCopy = new Board(board); // create board copy
 			winCondition = boardCopy.move(move); // make move on copy
 
@@ -775,8 +805,8 @@ public class Board
 
 	public Move getNegamaxAiMoveAB(int depth)
 	{
-		float a0 = Float.NEGATIVE_INFINITY;
-		float b0 = Float.POSITIVE_INFINITY;
+		int a0 = Integer.MIN_VALUE;
+		int b0 = Integer.MAX_VALUE;
 
 		// create move-indexed map for board copies
 		ArrayList<Board> boardsForNextLegalMoves = new ArrayList<Board>(this.legalMovesForNextTurn.size());
@@ -788,7 +818,7 @@ public class Board
 
 			// System.out.println("Considering move: "+move.toString());
 
-			float currentScore;
+			int currentScore;
 			Board boardCopy = new Board(this); // create board copy
 			winCondition = boardCopy.move(move); // make move on copy
 
@@ -818,6 +848,13 @@ public class Board
 			boardCopy.moveTaken = move;
 
 			boardsForNextLegalMoves.add(boardCopy); // add board copy to map
+
+			// if i won, return, because winning is the highest score
+			if (currentScore >= 10000) {
+				Board.abortCalculation = true; // signal abort calculation
+				Board.winInCurrentDepth = true;
+				break;
+			}
 		}
 
 		// only keep boards with largest score
@@ -842,25 +879,25 @@ public class Board
 	}
 
 	// search for the highest score
-	public float getNegamaxScoreAB(Board board, int recursionDepth, float a0, float b0)
+	public int getNegamaxScoreAB(Board board, int recursionDepth, int a0, int b0)
 	{
 		// count number of recursions
 		Board.numberOfRecursions += 1;
 		if (Board.numberOfRecursions >= 10000) { // should check time
 
 			// took longer than I am allowed to
-			if (System.currentTimeMillis() - Board.startTime >= Constants.MILLISECONDS_PER_MOVE) {
+			if (System.currentTimeMillis() - Board.startTime >= Board.millisecondsPerMove ) {
 				Board.abortCalculation = true; // signal abort calculation
 			}
 			Board.numberOfRecursions = 0; // reset recursion counter
 		}
 
 		if (Board.abortCalculation == true) { // should abort calculation
-			return Float.NEGATIVE_INFINITY;
+			return Integer.MIN_VALUE;
 		}
 
 		char winCondition;
-		float highestScore = Float.NEGATIVE_INFINITY;
+		int highestScore = Integer.MIN_VALUE;
 
 		// if recursion reached 0, return score
 		if (recursionDepth == 0) {
@@ -870,7 +907,7 @@ public class Board
 		// for every legal move
 		for (Move move : board.legalMovesForNextTurn) {
 
-			float currentScore;
+			int currentScore;
 			// make move, save old values
 			// copy squares
 			char[][] squares = new char[Constants.MAX_ROW + 1][Constants.MAX_COLUMN + 1];
@@ -883,8 +920,8 @@ public class Board
 			int moveNum = board.moveNum;
 			char onMove = board.onMove;
 			ArrayList<Move> legalMovesForNextTurn = board.legalMovesForNextTurn;
-			float score = board.score;
-			
+			int score = board.score;
+
 			winCondition = board.move(move); // make move
 
 			// act on game-over
@@ -910,7 +947,7 @@ public class Board
 			board.onMove = onMove;
 			board.legalMovesForNextTurn = legalMovesForNextTurn;
 			board.score = score;
-			
+
 			// abort if score is too high
 			if (currentScore >= b0) {
 				return currentScore;
@@ -919,6 +956,11 @@ public class Board
 			// save board score if highest
 			if (currentScore > highestScore) {
 				highestScore = currentScore;
+			}
+
+			// if i won, return, because winning is the highest score
+			if (highestScore >= 10000) {
+				break;
 			}
 
 			// save new a0 if score higher

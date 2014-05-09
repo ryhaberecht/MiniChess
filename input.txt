@@ -1,7 +1,7 @@
-10 B
-.k.qr
-pPppp
-.....
-...PP
-PQ...
-RNB.K
+1 W
+6|kqbnr
+5|ppppp
+4|.....
+3|.....
+2|PPPPP
+1|RNBQK
