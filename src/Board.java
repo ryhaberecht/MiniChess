@@ -76,7 +76,7 @@ public class Board
 		// copy rest
 		this.moveNum = board.moveNum;
 		this.onMove = board.onMove;
-		// this.legalMovesForNextTurn = deepCopyArrayList(board.legalMovesForNextTurn);
+		this.legalMovesForNextTurn = null;// deepCopyArrayList(board.legalMovesForNextTurn);
 		this.score = board.score;
 	}
 
@@ -583,7 +583,7 @@ public class Board
 					counter_white += 35;
 					break;
 				case 'P':
-					if (i == Constants.MAX_ROW - 1) { // about to be promoted to queen
+					if (i == (Constants.MAX_ROW - 1)) { // about to be promoted to queen
 						counter_white += 20;
 					}
 					else {
@@ -606,7 +606,7 @@ public class Board
 					counter_black += 35;
 					break;
 				case 'p':
-					if (i == Constants.MIN_ROW + 1) { // promoted to queen
+					if (i == (Constants.MIN_ROW + 1)) { // promoted to queen
 						counter_black += 20;
 					}
 					else {
@@ -633,7 +633,7 @@ public class Board
 		Move lastMove = null;
 
 		// System.out.println(this.printValidMovesForNextTurn());
-		System.out.println("Milliseconds for this move: " + Board.millisecondsPerMove); // TODO
+		// System.out.println("Milliseconds for this move: " + Board.millisecondsPerMove); // TODO
 
 		Board.startTime = System.currentTimeMillis(); // save current system time
 
@@ -641,8 +641,8 @@ public class Board
 
 			bestMoveYet = lastMove;
 
-			// lastMove = getNegamaxAiMove(depth); // calculate with specific depth
-			lastMove = getNegamaxAiMoveAB(depth); // calculate with specific depth
+			lastMove = getNegamaxAiMove(depth); // calculate with specific depth
+			// lastMove = getNegamaxAiMoveAB(depth); // calculate with specific depth
 
 			depth++; // increase depth for next run
 
@@ -651,12 +651,13 @@ public class Board
 				Board.abortCalculation = true; // signal abort calculation
 			}
 
-			if (Board.abortCalculation == true && Board.winInCurrentDepth == true) { // lastMove was win, save it nevertheless
-				bestMoveYet = lastMove;
-			}
+			/*
+			 * if (Board.abortCalculation == true && Board.winInCurrentDepth == true) { // lastMove was win, save it nevertheless bestMoveYet =
+			 * lastMove; }
+			 */
 		}
 
-		System.out.println("Depth used: " + (depth - 1)); // TODO
+		// System.out.println("Depth used: " + (depth - 1)); // TODO
 
 		Board.abortCalculation = false; // reset aborting calculation for future call
 		Board.winInCurrentDepth = false; // reset win signal for future calls
@@ -667,7 +668,12 @@ public class Board
 		Board.millisecondsLeftForMatch -= totalTimeUsedSinceStart; // total time left for match
 		int numberOfMovesLeft = Constants.NUMBER_OF_MOVES_PER_MATCH - ((this.onMove == 'W') ? ((this.moveNum + 1) / 2) : (this.moveNum / 2)); // moves
 																																				// left
-		Board.millisecondsPerMove = Board.millisecondsLeftForMatch / numberOfMovesLeft;
+		if (numberOfMovesLeft <= 0) {
+			Board.millisecondsPerMove = Board.millisecondsLeftForMatch;
+		}
+		else {
+			Board.millisecondsPerMove = Board.millisecondsLeftForMatch / numberOfMovesLeft;
+		}
 
 		if (bestMoveYet == null) {
 			throw new Error("Was too slow to calculate move, bestMoveYet == null");
@@ -815,8 +821,6 @@ public class Board
 		// for every legal move
 		for (Move move : this.legalMovesForNextTurn) {
 
-			// System.out.println("Considering move: "+move.toString());
-
 			int currentScore;
 			Board boardCopy = new Board(this); // create board copy
 			winCondition = boardCopy.move(move); // make move on copy
@@ -844,16 +848,15 @@ public class Board
 			}
 
 			boardCopy.score = currentScore;
+			// System.out.println("Considering move: "+move.toString() + " with score: " + boardCopy.score);
 			boardCopy.moveTaken = move;
 
 			boardsForNextLegalMoves.add(boardCopy); // add board copy to map
 
-			// if i won, return, because winning is the highest score
-			if (currentScore >= 10000) {
-				Board.abortCalculation = true; // signal abort calculation
-				Board.winInCurrentDepth = true;
-				break;
-			}
+			/*
+			 * // if i won, return, because winning is the highest score if (currentScore >= 10000) { Board.abortCalculation = true; // signal abort
+			 * calculation Board.winInCurrentDepth = true; break; }
+			 */
 		}
 
 		// only keep boards with largest score
@@ -861,10 +864,10 @@ public class Board
 		for (Board board : boardsForNextLegalMoves) {
 			if (board.score >= a0) {
 				survivingBoardsList.add(board);
-				System.out.println("board with score " + board.score + " and move " + board.moveTaken + " survived.");
+				// System.out.println("board with score " + board.score + " and move " + board.moveTaken + " survived.");
 			}
 		}
-		System.out.println();
+		// System.out.println();
 
 		// if there are several equally good moves
 		if (survivingBoardsList.size() > 0) {
@@ -893,7 +896,7 @@ public class Board
 		}
 
 		if (Board.abortCalculation == true) { // should abort calculation
-			return -100000;
+			return 10000000;
 		}
 
 		char winCondition;
@@ -904,33 +907,27 @@ public class Board
 			return calculateHeuristicScore(board);
 		}
 
-		ArrayList<Move> legalMovesForNextTurn = board.legalMovesForNextTurn;
+		// ArrayList<Move> legalMovesForNextTurn = board.legalMovesForNextTurn;
 
 		// for every legal move
-		for (Move move : legalMovesForNextTurn) {
+		for (Move move : board.legalMovesForNextTurn) {
 
 			int currentScore;
-			// make move, save old values
-			// copy squares
-			char[][] squares = new char[Constants.MAX_ROW + 1][Constants.MAX_COLUMN + 1];
-			for (int row = Constants.MAX_ROW; row >= Constants.MIN_ROW; row--) {
-				for (int col = Constants.MIN_COLUMN; col <= Constants.MAX_COLUMN; col++) {
-					squares[row][col] = board.squares[row][col];
-				}
-			}
-			// copy rest
-			int moveNum = board.moveNum;
-			char onMove = board.onMove;
-			int score = board.score;
-
-			winCondition = board.move(move); // make move
+			/*
+			 * // make move, save old values // copy squares char[][] squares = new char[Constants.MAX_ROW + 1][Constants.MAX_COLUMN + 1]; for (int
+			 * row = Constants.MAX_ROW; row >= Constants.MIN_ROW; row--) { for (int col = Constants.MIN_COLUMN; col <= Constants.MAX_COLUMN; col++) {
+			 * squares[row][col] = board.squares[row][col]; } } // copy rest int moveNum = board.moveNum; char onMove = board.onMove; int score =
+			 * board.score;
+			 */
+			Board boardCopy = new Board(board); // create board copy
+			winCondition = boardCopy.move(move); // make move
 
 			// act on game-over
 			if (winCondition == '=') { // tie
 				currentScore = 0;
 			}// increase depth for next run
 			else if (winCondition == 'B' || winCondition == 'W') { // some side wins
-				if (winCondition == onMove) { // I win
+				if (winCondition == board.onMove) { // I win
 					currentScore = 10000;
 				}
 				else { // opponent wins
@@ -939,15 +936,13 @@ public class Board
 				}
 			}
 			else {
-				currentScore = -getNegamaxScoreAB(board, (recursionDepth - 1), -b0, -a0); // calculate new board score
+				currentScore = -getNegamaxScoreAB(boardCopy, (recursionDepth - 1), -b0, -a0); // calculate new board score
 			}
 
-			// undo move
-			board.squares = squares;
-			board.moveNum = moveNum;
-			board.onMove = onMove;
-			// board.legalMovesForNextTurn = legalMovesForNextTurn;
-			board.score = score;
+			/*
+			 * // undo move board.squares = squares; board.moveNum = moveNum; board.onMove = onMove; // board.legalMovesForNextTurn =
+			 * legalMovesForNextTurn; board.score = score;
+			 */
 
 			// abort if score is too high
 			if (currentScore >= b0) {

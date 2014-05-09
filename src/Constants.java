@@ -8,6 +8,6 @@ public final class Constants
 	public final static String PORT = "21";
 	public final static String USERNAME = "MiniCheese";
 	public final static String PASSWORD = "appenzeller";
-	public final static long MILLISECONDS_PER_MATCH = 90000;	// 5s security FIXME 290000
+	public final static long MILLISECONDS_PER_MATCH = 290000;	// 5s security FIXME 290000
 	public final static int NUMBER_OF_MOVES_PER_MATCH = 40;	// per player
 }
