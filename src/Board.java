@@ -583,7 +583,7 @@ public class Board
 					counter_white += 35;
 					break;
 				case 'P':
-					if (i == Constants.MAX_ROW-1) { // about to be promoted to queen
+					if (i == Constants.MAX_ROW - 1) { // about to be promoted to queen
 						counter_white += 20;
 					}
 					else {
@@ -606,7 +606,7 @@ public class Board
 					counter_black += 35;
 					break;
 				case 'p':
-					if (i == Constants.MIN_ROW+1) { // promoted to queen
+					if (i == Constants.MIN_ROW + 1) { // promoted to queen
 						counter_black += 20;
 					}
 					else {
@@ -631,9 +631,9 @@ public class Board
 		int depth = 0;
 		Move bestMoveYet = null;
 		Move lastMove = null;
-		
-		//System.out.println(this.printValidMovesForNextTurn());
-		System.out.println("Milliseconds for this move: " + Board.millisecondsPerMove);	//TODO
+
+		// System.out.println(this.printValidMovesForNextTurn());
+		System.out.println("Milliseconds for this move: " + Board.millisecondsPerMove); // TODO
 
 		Board.startTime = System.currentTimeMillis(); // save current system time
 
@@ -650,18 +650,23 @@ public class Board
 			if (System.currentTimeMillis() - Board.startTime >= Board.millisecondsPerMove) {
 				Board.abortCalculation = true; // signal abort calculation
 			}
+
+			if (Board.abortCalculation == true && Board.winInCurrentDepth == true) { // lastMove was win, save it nevertheless
+				bestMoveYet = lastMove;
+			}
 		}
 
-		System.out.println("Depth used: " + (depth - 1));	// TODO
+		System.out.println("Depth used: " + (depth - 1)); // TODO
 
 		Board.abortCalculation = false; // reset aborting calculation for future call
 		Board.winInCurrentDepth = false; // reset win signal for future calls
 		Board.numberOfRecursions = 0; // reset number of recursions for future call
-		
+
 		// recalculate time per move
-		long totalTimeUsedSinceStart = System.currentTimeMillis() - Board.startTime;	// time for last move
-		Board.millisecondsLeftForMatch  -= totalTimeUsedSinceStart;	// total time left for match
-		int numberOfMovesLeft = Constants.NUMBER_OF_MOVES_PER_MATCH - ((this.onMove == 'W') ? ((this.moveNum + 1) / 2) : (this.moveNum / 2));	// moves left
+		long totalTimeUsedSinceStart = System.currentTimeMillis() - Board.startTime; // time for last move
+		Board.millisecondsLeftForMatch -= totalTimeUsedSinceStart; // total time left for match
+		int numberOfMovesLeft = Constants.NUMBER_OF_MOVES_PER_MATCH - ((this.onMove == 'W') ? ((this.moveNum + 1) / 2) : (this.moveNum / 2)); // moves
+																																				// left
 		Board.millisecondsPerMove = Board.millisecondsLeftForMatch / numberOfMovesLeft;
 
 		if (bestMoveYet == null) {
@@ -856,7 +861,7 @@ public class Board
 		for (Board board : boardsForNextLegalMoves) {
 			if (board.score >= a0) {
 				survivingBoardsList.add(board);
-				System.out.println("board with score " + board.score + " and move " + board.moveTaken+ " survived.");
+				System.out.println("board with score " + board.score + " and move " + board.moveTaken + " survived.");
 			}
 		}
 		System.out.println();
@@ -881,7 +886,7 @@ public class Board
 		if (Board.numberOfRecursions >= 10000) { // should check time
 
 			// took longer than I am allowed to
-			if (System.currentTimeMillis() - Board.startTime >= Board.millisecondsPerMove ) {
+			if (System.currentTimeMillis() - Board.startTime >= Board.millisecondsPerMove) {
 				Board.abortCalculation = true; // signal abort calculation
 			}
 			Board.numberOfRecursions = 0; // reset recursion counter
@@ -900,7 +905,7 @@ public class Board
 		}
 
 		ArrayList<Move> legalMovesForNextTurn = board.legalMovesForNextTurn;
-		
+
 		// for every legal move
 		for (Move move : legalMovesForNextTurn) {
 
@@ -941,7 +946,7 @@ public class Board
 			board.squares = squares;
 			board.moveNum = moveNum;
 			board.onMove = onMove;
-			//board.legalMovesForNextTurn = legalMovesForNextTurn;
+			// board.legalMovesForNextTurn = legalMovesForNextTurn;
 			board.score = score;
 
 			// abort if score is too high
