@@ -520,7 +520,7 @@ public class Board
 	{
 		// create move-indexed map for board copies
 		ArrayList<Board> boardsForNextLegalMoves = new ArrayList<Board>(this.legalMovesForNextTurn.size());
-		int lowestScore = Integer.MAX_VALUE;
+		int lowestScore = 100000;
 
 		// for every legal move
 		for (Move move : this.legalMovesForNextTurn) {
@@ -632,11 +632,12 @@ public class Board
 		Move bestMoveYet = null;
 		Move lastMove = null;
 		
+		//System.out.println(this.printValidMovesForNextTurn());
 		System.out.println("Milliseconds for this move: " + Board.millisecondsPerMove);	//TODO
 
 		Board.startTime = System.currentTimeMillis(); // save current system time
 
-		while (Board.abortCalculation == false) { // still got time
+		while (Board.abortCalculation == false && depth < 100) { // still got time
 
 			bestMoveYet = lastMove;
 
@@ -648,13 +649,6 @@ public class Board
 			// work around some strange bug in java not updating time on time (duh...) with increasing number of recursions
 			if (System.currentTimeMillis() - Board.startTime >= Board.millisecondsPerMove) {
 				Board.abortCalculation = true; // signal abort calculation
-			}
-
-			if (Board.abortCalculation == true || depth >= 100) {
-				if (Board.winInCurrentDepth == true) { // lastMove was win, save it nevertheless
-					bestMoveYet = lastMove;
-				}
-				break;
 			}
 		}
 
@@ -681,7 +675,7 @@ public class Board
 		// create move-indexed map for board copies
 		ArrayList<Board> boardsForNextLegalMoves = new ArrayList<Board>(this.legalMovesForNextTurn.size());
 
-		int highestScore = Integer.MIN_VALUE;
+		int highestScore = -100000;
 		char winCondition;
 
 		// for every legal move
@@ -758,10 +752,10 @@ public class Board
 		}
 
 		if (Board.abortCalculation == true) { // should abort calculation
-			return Integer.MIN_VALUE;
+			return -100000;
 		}
 
-		int highestScore = Integer.MIN_VALUE;
+		int highestScore = -100000;
 		char winCondition;
 
 		// if recursion reached 0, return score
@@ -805,8 +799,8 @@ public class Board
 
 	public Move getNegamaxAiMoveAB(int depth)
 	{
-		int a0 = Integer.MIN_VALUE;
-		int b0 = Integer.MAX_VALUE;
+		int a0 = -100000;
+		int b0 = 100000;
 
 		// create move-indexed map for board copies
 		ArrayList<Board> boardsForNextLegalMoves = new ArrayList<Board>(this.legalMovesForNextTurn.size());
@@ -862,9 +856,10 @@ public class Board
 		for (Board board : boardsForNextLegalMoves) {
 			if (board.score >= a0) {
 				survivingBoardsList.add(board);
-				// System.out.println("board mit score " + board.score + " zur survivingBoardsList hinzugefügt.");
+				System.out.println("board with score " + board.score + " and move " + board.moveTaken+ " survived.");
 			}
 		}
+		System.out.println();
 
 		// if there are several equally good moves
 		if (survivingBoardsList.size() > 0) {
@@ -893,19 +888,21 @@ public class Board
 		}
 
 		if (Board.abortCalculation == true) { // should abort calculation
-			return Integer.MIN_VALUE;
+			return -100000;
 		}
 
 		char winCondition;
-		int highestScore = Integer.MIN_VALUE;
+		int highestScore = -100000;
 
 		// if recursion reached 0, return score
 		if (recursionDepth == 0) {
 			return calculateHeuristicScore(board);
 		}
 
+		ArrayList<Move> legalMovesForNextTurn = board.legalMovesForNextTurn;
+		
 		// for every legal move
-		for (Move move : board.legalMovesForNextTurn) {
+		for (Move move : legalMovesForNextTurn) {
 
 			int currentScore;
 			// make move, save old values
@@ -919,7 +916,6 @@ public class Board
 			// copy rest
 			int moveNum = board.moveNum;
 			char onMove = board.onMove;
-			ArrayList<Move> legalMovesForNextTurn = board.legalMovesForNextTurn;
 			int score = board.score;
 
 			winCondition = board.move(move); // make move
@@ -945,7 +941,7 @@ public class Board
 			board.squares = squares;
 			board.moveNum = moveNum;
 			board.onMove = onMove;
-			board.legalMovesForNextTurn = legalMovesForNextTurn;
+			//board.legalMovesForNextTurn = legalMovesForNextTurn;
 			board.score = score;
 
 			// abort if score is too high
@@ -956,11 +952,6 @@ public class Board
 			// save board score if highest
 			if (currentScore > highestScore) {
 				highestScore = currentScore;
-			}
-
-			// if i won, return, because winning is the highest score
-			if (highestScore >= 10000) {
-				break;
 			}
 
 			// save new a0 if score higher
